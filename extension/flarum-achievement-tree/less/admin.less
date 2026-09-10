@@ -1,0 +1,145 @@
+// 后台管理页面布局:限制最大宽度并居中,避免内容贴着左侧边栏
+.AchievementTreePage {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  h3 {
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+
+  h4 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  hr {
+    margin: 24px 0;
+  }
+}
+
+// 成就图标(后台表格里)
+.AchievementIcon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  vertical-align: middle;
+}
+
+.AchievementIconPreview {
+  margin-left: 8px;
+}
+
+// 后台表格
+.AchievementManager-table,
+.ApplicationReviewer-table {
+  width: 100%;
+
+  th,
+  td {
+    padding: 8px 10px;
+    vertical-align: middle;
+  }
+}
+
+// 证明材料缩略图
+.ApplicationProof {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 4px;
+}
+
+.AchievementManager-notice {
+  margin-bottom: 16px;
+}
+
+// 系列分组折叠面板
+.AchievementSeries {
+  border: 1px solid @control-bg;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  padding: 4px 12px;
+
+  > summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 6px 0;
+    list-style: none;
+
+    &::-webkit-details-marker { display: none; }
+
+    &:before {
+      content: "\25B8"; // ▸
+      display: inline-block;
+      margin-right: 6px;
+      transition: transform .15s;
+    }
+  }
+
+  &[open] > summary:before {
+    transform: rotate(90deg);
+  }
+
+  &-name { color: @heading-color; }
+  &-count { color: @muted-color; font-weight: 400; margin-left: 4px; }
+  &-add { margin-left: 12px; }
+}
+
+// 图片上传控件
+.AchievementImageUpload {
+  margin-top: 6px;
+}
+
+// 隐藏成就标记
+.AchievementBadge-hidden {
+  color: @muted-color;
+  font-size: 12px;
+}
+
+// 图片预览(已确认的图,带重新裁剪按钮)
+.AchievementImagePreview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+
+  &-thumb {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: @control-bg;
+  }
+}
+
+// 裁剪器:舞台上叠一个可拖动的正方形,周围用 box-shadow 压暗
+.AchievementImageCropper {
+  border: 1px solid @control-bg;
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 8px;
+  background: @body-bg;
+
+  &-stage {
+    user-select: none;
+  }
+
+  &-img {
+    display: block;
+    max-width: 360px;
+    max-height: 360px;
+  }
+
+  &-box {
+    pointer-events: auto;
+  }
+
+  &-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+  }
+}

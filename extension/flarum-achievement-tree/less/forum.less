@@ -1,0 +1,289 @@
+.AchievementBadgeList {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.AchievementBadge {
+  background: none;
+  border: 0;
+  padding: 0 2px;
+  line-height: 1;
+  cursor: pointer;
+
+  &-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 15px;
+    color: #8b5cf6;
+    vertical-align: middle;
+    object-fit: contain;
+  }
+
+  &:hover &-icon,
+  &:focus &-icon {
+    color: #6d28d9;
+  }
+}
+
+.AchievementModal {
+  &-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &-image {
+    width: 128px;
+    height: 128px;
+    font-size: 80px;
+    color: #8b5cf6;
+    object-fit: contain;
+    flex: none;
+    border-radius: 6px;
+    background: @control-bg;
+  }
+
+  &-meta {
+    h3 {
+      margin: 0 0 4px;
+    }
+
+    p {
+      margin: 0;
+      color: @muted-color;
+    }
+  }
+
+  &-facts {
+    list-style: none;
+    margin: 15px 0 0;
+    padding: 0;
+
+    li {
+      margin-bottom: 4px;
+    }
+  }
+}
+
+.AchievementBadge-hidden {
+  color: @muted-color;
+  font-size: 12px;
+}
+
+.UserAchievementTree {
+  padding: 16px 24px;
+  overflow-x: auto;
+
+  &-summary {
+    margin-bottom: 14px;
+    color: @muted-color;
+    font-size: 13px;
+  }
+
+  &-columns {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 18px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-bottom: 6px;
+  }
+}
+
+.SeriesColumn {
+  flex: 0 0 180px;
+  display: flex;
+  flex-direction: column;
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 2px;
+  }
+
+  &-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: @heading-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: @control-bg;
+    border: 1px solid @control-color;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: @muted-color;
+
+    .icon {
+      font-size: 11px;
+    }
+  }
+
+  &-count {
+    font-weight: 600;
+  }
+
+  &-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.AchievementTreeNode {
+  &-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: 180px;
+    height: 220px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid @control-color;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: transform 0.15s, box-shadow 0.15s;
+    background: #fff;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  &-media {
+    position: relative;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+
+  &-mediaImg {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    font-size: 48px;
+    color: #8b5cf6;
+  }
+
+  &-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &-name {
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    color: @heading-color;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-desc {
+    font-size: 11px;
+    line-height: 1.3;
+    color: @muted-color;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &-action {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid @control-color;
+    min-height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: @muted-color;
+    margin: 0;
+    cursor: pointer;
+
+    input {
+      margin: 0;
+    }
+
+    &.is-disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  .Button--link {
+    font-size: 12px;
+  }
+
+  // ⚠ is-earned / is-locked 直接挂在卡片元素自身上(没有外层包装),
+  //    选择器必须用 &-card.is-xxx,不能写成 &.is-xxx &-card(那要求祖先节点,永不命中)
+  // 已获得:白底 + 紫色边框(图片保持彩色)
+  &-card.is-earned {
+    background: #fff;
+    border-color: #8b5cf6;
+  }
+
+  // 未获得:黑色卡片 + 图片灰度
+  &-card.is-locked {
+    background: #111827;
+    border-color: #374151;
+
+    .AchievementTreeNode-name {
+      color: #f3f4f6;
+    }
+
+    .AchievementTreeNode-desc {
+      color: #9ca3af;
+    }
+
+    .AchievementTreeNode-mediaImg {
+      filter: grayscale(1) brightness(0.7);
+      color: #9ca3af;
+    }
+
+    .AchievementTreeNode-action {
+      border-top-color: #374151;
+    }
+  }
+}
+
+.AchievementApplyModal {
+  .Modal-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid @control-bg;
+    background: @body-bg;
+  }
+}

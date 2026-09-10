@@ -1,0 +1,104 @@
+thefish12357-achievement-tree:
+  admin:
+    manager_title: 成就管理
+    create_title: 新建成就
+    edit_title: 编辑成就
+
+    name: 名称
+    slug: 标识
+    description: 描述
+    icon: 图标
+    image_url: 图片地址
+    image_help: 填写图片完整地址,或点击下方按钮上传。建议正方形 PNG/SVG。
+    upload_image: 上传图片
+    uploading: 上传中…
+    upload_error: 上传失败,请重试
+    parent: 上级成就
+    no_parent: (无上级)
+    position: 排序
+    series: 系列
+    series_help: 同一系列的成就会分组展示;帖子内只显示该用户已获得的最高层级(tier 数字最大的,0 为最低),其余隐藏。
+    series_name: 系列名称
+    series_name_help: 该系列在页面上显示的名称,留空则显示系列标识。修改后会同步应用到同系列的所有成就。
+    tier: 层级
+    tier_help: 数字越大层级越高(0 为最低层级);同系列在帖子内只显示最高层级。
+    add_to_series: 在此系列添加成就
+    ungrouped: 未分组
+    is_hidden: 隐藏成就
+    hidden: 隐藏
+    actions: 操作
+    yes: 是
+    no: 否
+
+    edit: 编辑
+    delete: 删除
+    save: 保存
+    cancel: 取消
+    award: 授予
+    revoke: 撤销
+
+    award_user_id: 授予 / 撤销的目标用户 ID
+    award_help: 先填写用户 ID,再点击某一行的「授予」或「撤销」。
+    award_user_required: 请先填写用户 ID。
+    confirm_delete: 确定删除该成就?已获得的用户将失去该成就。
+    confirm_save: 确定保存对「{name}」的修改?
+    confirm_award: 确定将「{name}」授予用户 {id}?
+    confirm_revoke: 确定撤销用户 {id} 的「{name}」?
+    crop_title: 裁剪图片
+    crop_help: 拖动方框选择要保留的正方形区域,然后点击「确定」上传。
+    crop_confirm: 确定
+    crop_cancel: 取消
+    crop_reupload: 重新裁剪
+    crop_uploading: 裁剪上传中…
+    crop_incomplete: 请先完成或取消图片裁剪,再保存。
+
+    applications_title: 成就申请审核
+    filter: 状态
+    filter_all: 全部
+    user: 用户
+    achievement: 成就
+    message: 说明
+    proof: 证明材料
+    status: 状态
+    review_comment: 审核备注
+    rejection_reason: 驳回理由
+    rejection_reason_placeholder: 请填写驳回理由(选填)
+    approve: 通过
+    reject: 驳回
+    status_pending: 待审核
+    status_approved: 已通过
+    status_rejected: 已驳回
+    empty: 暂无申请。
+
+  forum:
+    series: 系列
+    tier: 层级
+    awarded_at: 获得时间
+    proof: 获得证明
+    proof_pending: 证明功能即将上线
+    parent: 上级成就
+    close: 关闭
+    cancel: 取消
+    notifications:
+      achievement_application_approved_text: 你的成就「{name}」申请已通过
+      achievement_application_rejected_text: 你的成就「{name}」申请被驳回
+      rejection_reason: 驳回理由
+    user_page:
+      nav: 成就
+      earned_summary: 已获得 {count} 个成就
+      no_achievements: 暂无成就。
+      loading: 加载中…
+      load_error: 成就加载失败。
+      locked: 尚未获得
+      apply: 申请该成就
+      apply_title: 申请「{name}」
+      apply_hint: 说明你获得「{name}」的理由,审核者会收到通知。
+      apply_placeholder: 描述你的成就(理由、证明链接等)
+      apply_submit: 提交申请
+      apply_submitted: 申请已提交。
+      apply_error: 申请提交失败。
+      display_toggle: 在帖子内显示
+      display_error: 更新显示偏好失败。
+      ungrouped: 未分组
+      expand: 展开
+      collapse: 收起

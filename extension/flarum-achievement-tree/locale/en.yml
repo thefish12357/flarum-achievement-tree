@@ -1,0 +1,102 @@
+thefish12357-achievement-tree:
+  # For more details on the format
+  # Checkout https://docs.flarum.org/extend/i18n.html#appendix-a-standard-key-format
+  admin:
+    manager_title: Achievement Management
+    create_title: Create Achievement
+    edit_title: Edit Achievement
+
+    name: Name
+    slug: Slug
+    description: Description
+    icon: Icon
+    image_url: Image URL
+    image_help: Fill in the full image URL, or click the button below to upload. Square PNG/SVG recommended.
+    upload_image: Upload image
+    uploading: Uploading…
+    upload_error: Upload failed, please retry
+    parent: Parent
+    no_parent: (No parent)
+    position: Position
+    series: Series
+    series_help: Achievements in the same series are grouped. In posts only the user's highest rank (highest tier number; 0 = lowest) is shown; others are hidden.
+    series_name: Series name
+    series_name_help: Display name for this series. Leave blank to show the series key. Changes apply to all achievements in the series.
+    tier: Tier
+    tier_help: Higher tier number = higher rank (0 is the lowest tier). In posts, only the top tier per series is shown.
+    points: Points
+    confirm_save: Confirm save changes to "{name}"?
+    confirm_award: Award "{name}" to user {id}?
+    confirm_revoke: Revoke "{name}" from user {id}?
+    crop_title: Crop image
+    crop_help: Drag the square to choose the area, then click Confirm to upload.
+    crop_confirm: Confirm
+    crop_cancel: Cancel
+    crop_reupload: Re-crop
+    crop_uploading: Uploading crop…
+    crop_incomplete: Please complete or cancel the image crop before saving.
+    is_hidden: Hidden achievement
+    hidden: Hidden
+    actions: Actions
+    yes: Yes
+    no: 'No'
+
+    edit: Edit
+    delete: Delete
+    save: Save
+    cancel: Cancel
+    award: Award
+    revoke: Revoke
+
+    award_user_id: User ID for award / revoke
+    award_help: Enter the target user ID first, then click Award or Revoke on a row.
+    award_user_required: Please enter a user ID first.
+    confirm_delete: Delete this achievement? Users who earned it will lose it.
+
+    applications_title: Achievement Applications
+    filter: Status
+    filter_all: All
+    user: User
+    achievement: Achievement
+    message: Message
+    proof: Proof
+    status: Status
+    review_comment: Review comment
+    rejection_reason: Rejection reason
+    rejection_reason_placeholder: Reason for rejection (optional)
+    approve: Approve
+    reject: Reject
+    status_pending: Pending
+    status_approved: Approved
+    status_rejected: Rejected
+    empty: No applications.
+
+  forum:
+    points: Points
+    parent: Parent achievement
+    close: Close
+    cancel: Cancel
+    notifications:
+      achievement_application_approved_text: 'Your application for achievement "{name}" has been approved'
+      achievement_application_rejected_text: 'Your application for achievement "{name}" has been rejected'
+      rejection_reason: Rejection reason
+    user_page:
+      nav: Achievements
+      earned_summary: "Earned {count} achievements"
+      no_achievements: No achievements yet.
+      loading: Loading achievements…
+      load_error: Failed to load achievements.
+      locked: Not yet earned
+      apply: Apply for this
+      apply_title: Apply for {name}
+      apply_hint: Tell us why you deserve "{name}". The reviewer will be notified.
+      apply_placeholder: Describe your achievement (reason, proof links, etc.)
+      apply_submit: Submit application
+      apply_submitted: Application submitted.
+      apply_error: Failed to submit application.
+      display_toggle: Show on posts
+      display_error: Failed to update display preference.
+      ungrouped: Ungrouped
+      expand: Expand
+      collapse: Collapse
+    # M7 用户资料页成就树 / M8 设置页证明材料
