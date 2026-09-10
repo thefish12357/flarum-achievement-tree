@@ -2,8 +2,7 @@ import Component from 'flarum/common/Component';
 import SeriesColumn from './SeriesColumn';
 import ApplyAchievementModal from './ApplyAchievementModal';
 
-const trans = (key, vars) =>
-  app.translator.trans(`thefish12357-achievement-tree.forum.${key}`, vars);
+const trans = (key, vars) => app.translator.trans(`thefish12357-achievement-tree.forum.${key}`, vars);
 
 export default class UserAchievementTree extends Component {
   oninit(vnode) {
@@ -13,8 +12,7 @@ export default class UserAchievementTree extends Component {
     this.isOwner = !!(app.session.user && app.session.user.id() === this.user.id());
 
     // 从该用户内嵌的 achievements 中读出"已获得/是否显示"
-    const embedded =
-      (this.user.data && this.user.data.attributes && this.user.data.attributes.achievements) || [];
+    const embedded = (this.user.data && this.user.data.attributes && this.user.data.attributes.achievements) || [];
     this.earnedInfo = {};
     embedded.forEach((a) => {
       this.earnedInfo[a.id] = {
@@ -83,16 +81,12 @@ export default class UserAchievementTree extends Component {
 
     const sortItems = (x, y) =>
       // tier 降序:数字越大等级越高,顶端显示最高等级(0 为最低)
-      (y.tier() || 0) - (x.tier() || 0) ||
-      (x.position() || 0) - (y.position() || 0) ||
-      String(x.id()).localeCompare(String(y.id()));
+      (y.tier() || 0) - (x.tier() || 0) || (x.position() || 0) - (y.position() || 0) || String(x.id()).localeCompare(String(y.id()));
 
     map.forEach((g) => {
       g.items.sort(sortItems);
       const earned = g.items.filter((i) => this.earnedIds.has(i.id()));
-      g.topEarned = earned.length
-        ? earned.reduce((a, b) => ((a.tier() || 0) >= (b.tier() || 0) ? a : b))
-        : null;
+      g.topEarned = earned.length ? earned.reduce((a, b) => ((a.tier() || 0) >= (b.tier() || 0) ? a : b)) : null;
     });
 
     const arr = Array.from(map.values());
@@ -159,13 +153,8 @@ export default class UserAchievementTree extends Component {
     }
 
     if (this.error) {
-      const msg =
-        (this.error && this.error.message) ||
-        (typeof this.error === 'string' ? this.error : null);
-      return m(
-        '.UserAchievementTree',
-        m('p', msg ? `${trans('user_page.load_error')} (${msg})` : trans('user_page.load_error'))
-      );
+      const msg = (this.error && this.error.message) || (typeof this.error === 'string' ? this.error : null);
+      return m('.UserAchievementTree', m('p', msg ? `${trans('user_page.load_error')} (${msg})` : trans('user_page.load_error')));
     }
 
     if (!this.groups.length) {
@@ -173,10 +162,7 @@ export default class UserAchievementTree extends Component {
     }
 
     return m('.UserAchievementTree', [
-      m(
-        '.UserAchievementTree-summary',
-        trans('user_page.earned_summary', { count: this.earnedIds.size })
-      ),
+      m('.UserAchievementTree-summary', trans('user_page.earned_summary', { count: this.earnedIds.size })),
       m(
         '.UserAchievementTree-columns',
         this.groups.map((g) =>

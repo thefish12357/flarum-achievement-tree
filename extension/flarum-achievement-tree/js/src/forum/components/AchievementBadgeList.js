@@ -29,11 +29,13 @@ export default class AchievementBadgeList extends Component {
     // 1. 优先使用后端直接嵌入 user.attributes 的 achievements 数组
     const embedded = user && user.data && user.data.attributes && user.data.attributes.achievements;
     if (embedded && embedded.length) {
-      this.achievements = embedded.map((item) => app.store.createRecord('achievements', {
-        id: item.id,
-        type: 'achievements',
-        attributes: item.attributes,
-      }));
+      this.achievements = embedded.map((item) =>
+        app.store.createRecord('achievements', {
+          id: item.id,
+          type: 'achievements',
+          attributes: item.attributes,
+        })
+      );
       m.redraw();
       return;
     }

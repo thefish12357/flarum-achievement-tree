@@ -51,19 +51,32 @@ class UploadAchievementImageController implements RequestHandlerInterface
             return new JsonResponse(['errors' => [['detail' => '上传失败,错误码 '.$file->getError()]]], 400);
         }
 
+        // 大小限制(2MB),防止资源耗尽
+        $maxSize = 2 * 1024 * 1024;
+        if ($file->getSize() > $maxSize) {
+            return new JsonResponse(['errors' => [['detail' => '图片过大,最大 2MB']]], 400);
+        }
+
         $clientName = $file->getClientFilename();
         $ext = strtolower(pathinfo($clientName, PATHINFO_EXTENSION));
-        $allowed = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg'];
+        // 仅允许位图,禁用 SVG(SVG 可内嵌脚本造成存储型 XSS)
+        $allowedExt = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
+        $allowedMime = ['image/png', 'image/jpeg', 'image/gif', 'image/webp'];
+        $mime = $file->getClientMediaType();
 
-        if (! in_array($ext, $allowed, true)) {
-            return new JsonResponse(['errors' => [['detail' => '不支持的图片类型,仅允许: '.implode('/', $allowed)]]], 400);
+        if (! in_array($ext, $allowedExt, true) || ! in_array($mime, $allowedMime, true)) {
+            return new JsonResponse(['errors' => [['detail' => '不支持的图片类型,仅允许: '.implode('/', $allowedExt)]]], 400);
+        }
+
+        $contents = $file->getStream()->getContents();
+
+        // 校验真实图片内容,防止扩展名/MIME 伪装
+        if (@getimagesizefromstring($contents) === false) {
+            return new JsonResponse(['errors' => [['detail' => '文件内容不是有效的图片']]], 400);
         }
 
         $name = Str::random(16).'.'.$ext;
-
-        $stream = $file->getStream();
-        $stream->rewind();
-        $this->disk->put($name, $stream->getContents());
+        $this->disk->put($name, $contents);
 
         return new JsonResponse(['url' => '/assets/badges/'.$name], 201);
     }

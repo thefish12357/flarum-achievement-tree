@@ -39,10 +39,7 @@ export default class AchievementModal extends Modal {
           achievement.imageUrl()
             ? m('img.AchievementModal-image', { src: achievement.imageUrl(), alt: achievement.name() })
             : icon(achievement.icon() || 'fas fa-medal', { className: 'AchievementModal-image' }),
-          m('.AchievementModal-meta', [
-            m('h3', achievement.name()),
-            m('p', achievement.description() || '-'),
-          ]),
+          m('.AchievementModal-meta', [m('h3', achievement.name()), m('p', achievement.description() || '-')]),
         ]),
         m('ul.AchievementModal-facts', [
           achievement.series() ? m('li', [m('strong', `${trans('series')}: `), achievement.seriesName() || achievement.series()]) : null,
@@ -52,9 +49,7 @@ export default class AchievementModal extends Modal {
           m('li', [m('strong', `${trans('proof')}: `), trans('proof_pending')]),
         ]),
       ]),
-      m('.Modal-footer', [
-        m(Button, { className: 'Button Button--primary', onclick: () => this.hide() }, trans('close')),
-      ]),
+      m('.Modal-footer', [m(Button, { className: 'Button Button--primary', onclick: () => this.hide() }, trans('close'))]),
     ];
   }
 }

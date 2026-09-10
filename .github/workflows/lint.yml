@@ -1,0 +1,25 @@
+name: Lint
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'extension/flarum-achievement-tree/js/src/**'
+  pull_request:
+    paths:
+      - 'extension/flarum-achievement-tree/js/src/**'
+
+jobs:
+  prettier:
+    name: JS / Prettier
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extension/flarum-achievement-tree/js
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm run format-check

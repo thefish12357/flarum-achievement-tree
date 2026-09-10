@@ -5,10 +5,13 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extension/flarum-achievement-tree
 
     strategy:
       matrix:
-        php: [7.3, 7.4, '8.0']
+        php: ['7.4', '8.0', '8.1']
         service: ['mysql:5.7', mariadb]
         prefix: ['', flarum_]
 
@@ -20,20 +23,6 @@ jobs:
           - prefix: flarum_
             prefixStr: (prefix)
 
-        exclude:
-          - php: 7.3
-            service: 'mysql:5.7'
-            prefix: flarum_
-          - php: 7.3
-            service: mariadb
-            prefix: flarum_
-          - php: 8.0
-            service: 'mysql:5.7'
-            prefix: flarum_
-          - php: 8.0
-            service: mariadb
-            prefix: flarum_
-
     services:
       mysql:
         image: ${{ matrix.service }}
@@ -43,7 +32,7 @@ jobs:
     name: 'PHP ${{ matrix.php }} / ${{ matrix.db }} ${{ matrix.prefixStr }}'
 
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -53,9 +42,7 @@ jobs:
           extensions: curl, dom, gd, json, mbstring, openssl, pdo_mysql, tokenizer, zip
           tools: phpunit, composer:v2
 
-      # The authentication alter is necessary because newer mysql versions use the `caching_sha2_password` driver,
-      # which isn't supported prior to PHP7.4
-      # When we drop support for PHP7.3, we should remove this from the setup.
+      # 测试用 MySQL 容器使用 root/root,仅本地 CI 临时容器,非真实凭证
       - name: Create MySQL Database
         run: |
           sudo systemctl start mysql

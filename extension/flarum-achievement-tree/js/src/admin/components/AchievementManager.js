@@ -23,14 +23,14 @@ export default class AchievementManager extends Component {
     this.form = this.blankForm();
 
     // 图片裁剪器状态(上传后用正方形框确定展示区域,见 0.4 决策与坑27)
-    this.crop = null;          // { src, x, y, size } 百分比坐标
-    this.cropImgEl = null;     // 实际 <img> 元素,用于读取尺寸做裁剪
-    this.cropping = false;     // 正在上传裁剪后的图
+    this.crop = null; // { src, x, y, size } 百分比坐标
+    this.cropImgEl = null; // 实际 <img> 元素,用于读取尺寸做裁剪
+    this.cropping = false; // 正在上传裁剪后的图
     this.cropError = '';
     this.cropDrag = null;
     this._cropMove = this.onCropMouseMove.bind(this);
     this._cropUp = this.onCropMouseUp.bind(this);
-    this._cropInitialized = false;  // 首次拿到图片时按长宽比居中方框;拖动后保持用户位置
+    this._cropInitialized = false; // 首次拿到图片时按长宽比居中方框;拖动后保持用户位置
 
     this.load();
   }
@@ -146,7 +146,10 @@ export default class AchievementManager extends Component {
     } catch (e) {
       let msg = '';
       if (e && e.errors && Array.isArray(e.errors) && e.errors.length) {
-        msg = e.errors.map((x) => x.detail || x.title || '').filter(Boolean).join('; ');
+        msg = e.errors
+          .map((x) => x.detail || x.title || '')
+          .filter(Boolean)
+          .join('; ');
       } else if (e && e.message) {
         msg = e.message;
       } else {
@@ -372,7 +375,10 @@ export default class AchievementManager extends Component {
     } catch (e) {
       let msg = '';
       if (e && e.errors && Array.isArray(e.errors) && e.errors.length) {
-        msg = e.errors.map((x) => x.detail || x.title || '').filter(Boolean).join('; ');
+        msg = e.errors
+          .map((x) => x.detail || x.title || '')
+          .filter(Boolean)
+          .join('; ');
       } else if (e && e.message) {
         msg = e.message;
       } else {
@@ -391,9 +397,7 @@ export default class AchievementManager extends Component {
     }
 
     const parentOptions = [{ value: '', label: trans('no_parent') }].concat(
-      this.achievements
-        .filter((a) => !this.editingId || a.id() !== this.editingId)
-        .map((a) => ({ value: a.id(), label: `#${a.id()} ${a.name()}` }))
+      this.achievements.filter((a) => !this.editingId || a.id() !== this.editingId).map((a) => ({ value: a.id(), label: `#${a.id()} ${a.name()}` }))
     );
 
     const groups = this.grouped();
@@ -403,10 +407,7 @@ export default class AchievementManager extends Component {
 
       return m('tr', [
         m('td', a.imageUrl() ? m('img.AchievementIcon', { src: a.imageUrl(), alt: a.name() }) : icon(a.icon() || 'fas fa-medal')),
-        m('td', [
-          a.name(),
-          a.isHidden() ? m('span.AchievementBadge-hidden', ` (${trans('hidden')})`) : null,
-        ]),
+        m('td', [a.name(), a.isHidden() ? m('span.AchievementBadge-hidden', ` (${trans('hidden')})`) : null]),
         m('td', String(a.tier() || 0)),
         m('td', parent ? `#${parent.id()} ${parent.name()}` : '-'),
         m('td', a.isHidden() ? trans('yes') : trans('no')),
@@ -426,30 +427,49 @@ export default class AchievementManager extends Component {
       const label = seriesKey ? groupSeriesName || seriesKey : trans('ungrouped');
       const isCollapsed = this.collapsed[seriesKey] ?? false;
 
-      return m('details.AchievementSeries', {
-        open: !isCollapsed,
-        ontoggle: (e) => { this.collapsed[seriesKey] = !e.target.open; },
-      }, [
-        m('summary', [
-          m('span.AchievementSeries-name', label),
-          m('span.AchievementSeries-count', ` (${list.length})`),
-          m(Button, {
-            className: 'Button Button--link AchievementSeries-add',
-            onclick: (e) => { e.stopPropagation(); this.startCreate(seriesKey); },
-          }, trans('add_to_series')),
-        ]),
-        m('table.AchievementManager-table', [
-          m('thead', m('tr', [
-            m('th', trans('icon')),
-            m('th', trans('name')),
-            m('th', trans('tier')),
-            m('th', trans('parent')),
-            m('th', trans('hidden')),
-            m('th', trans('actions')),
-          ])),
-          m('tbody', list.map((a) => renderRow(a))),
-        ]),
-      ]);
+      return m(
+        'details.AchievementSeries',
+        {
+          open: !isCollapsed,
+          ontoggle: (e) => {
+            this.collapsed[seriesKey] = !e.target.open;
+          },
+        },
+        [
+          m('summary', [
+            m('span.AchievementSeries-name', label),
+            m('span.AchievementSeries-count', ` (${list.length})`),
+            m(
+              Button,
+              {
+                className: 'Button Button--link AchievementSeries-add',
+                onclick: (e) => {
+                  e.stopPropagation();
+                  this.startCreate(seriesKey);
+                },
+              },
+              trans('add_to_series')
+            ),
+          ]),
+          m('table.AchievementManager-table', [
+            m(
+              'thead',
+              m('tr', [
+                m('th', trans('icon')),
+                m('th', trans('name')),
+                m('th', trans('tier')),
+                m('th', trans('parent')),
+                m('th', trans('hidden')),
+                m('th', trans('actions')),
+              ])
+            ),
+            m(
+              'tbody',
+              list.map((a) => renderRow(a))
+            ),
+          ]),
+        ]
+      );
     };
 
     return m('.AchievementManager', [
@@ -485,12 +505,22 @@ export default class AchievementManager extends Component {
         ]),
         m('.Form-group', [
           m('label', trans('icon')),
-          m('input.FormControl', { type: 'text', value: this.form.icon, oninput: withAttr('value', (v) => (this.form.icon = v)), placeholder: 'fas fa-medal' }),
+          m('input.FormControl', {
+            type: 'text',
+            value: this.form.icon,
+            oninput: withAttr('value', (v) => (this.form.icon = v)),
+            placeholder: 'fas fa-medal',
+          }),
           this.form.icon ? m('span.AchievementIconPreview', icon(this.form.icon)) : null,
         ]),
         m('.Form-group', [
           m('label', trans('image_url')),
-          m('input.FormControl', { type: 'text', value: this.form.imageUrl, oninput: withAttr('value', (v) => (this.form.imageUrl = v)), placeholder: 'https://...' }),
+          m('input.FormControl', {
+            type: 'text',
+            value: this.form.imageUrl,
+            oninput: withAttr('value', (v) => (this.form.imageUrl = v)),
+            placeholder: 'https://...',
+          }),
           m('div.AchievementImageUpload', [
             m('input.AchievementImageUpload-input', {
               type: 'file',
@@ -502,14 +532,18 @@ export default class AchievementManager extends Component {
                 e.target.value = '';
               },
             }),
-            m(Button, {
-              className: 'Button',
-              disabled: this.uploading,
-              onclick: () => {
-                const input = document.querySelector('.AchievementImageUpload-input');
-                if (input) input.click();
+            m(
+              Button,
+              {
+                className: 'Button',
+                disabled: this.uploading,
+                onclick: () => {
+                  const input = document.querySelector('.AchievementImageUpload-input');
+                  if (input) input.click();
+                },
               },
-            }, this.uploading ? trans('uploading') : trans('upload_image')),
+              this.uploading ? trans('uploading') : trans('upload_image')
+            ),
           ]),
           m('small.helpText', trans('image_help')),
           this.uploadError ? m('.alert.alert-danger', this.uploadError) : null,
@@ -526,48 +560,60 @@ export default class AchievementManager extends Component {
           ? m('.AchievementImageCropper.Form-group', [
               m('label', trans('crop_title')),
               m('small.helpText', trans('crop_help')),
-              m('.AchievementImageCropper-stage', {
-                style: { position: 'relative', display: 'inline-block', overflow: 'hidden', lineHeight: 0, maxWidth: '100%' },
-              }, [
-                m('img.AchievementImageCropper-img', {
-                  src: this.crop.src,
-                  onload: (e) => { this._initCropImg(e.target); },
-                  oncreate: (vnode) => {
-                    // 缓存图片时 onload 可能在 oncreate 之前已触发,这里兜底
-                    if (vnode.dom.complete && vnode.dom.naturalWidth) {
-                      this._initCropImg(vnode.dom);
-                    }
-                  },
-                }),
-                this.cropImgEl
-                  ? m('.AchievementImageCropper-box', {
-                      style: (() => {
-                        const img = this.cropImgEl;
-                        const w = img.clientWidth;
-                        const h = img.clientHeight;
-                        const side = (this.crop.size / 100) * Math.min(w, h);
-                        const x = (this.crop.x / 100) * w;
-                        const y = (this.crop.y / 100) * h;
-                        return {
-                          position: 'absolute',
-                          left: x + 'px',
-                          top: y + 'px',
-                          width: side + 'px',
-                          height: side + 'px',
-                          border: '2px solid #fff',
-                          // 用超大的 box-shadow 在方框外侧压暗,实现"除选定区外变暗"
-                          boxShadow: '0 0 0 9999px rgba(0,0,0,0.5)',
-                          cursor: 'move',
-                          boxSizing: 'border-box',
-                        };
-                      })(),
-                      onmousedown: (e) => { e.preventDefault(); this.beginCropDrag(e); },
-                    })
-                  : null,
-              ]),
+              m(
+                '.AchievementImageCropper-stage',
+                {
+                  style: { position: 'relative', display: 'inline-block', overflow: 'hidden', lineHeight: 0, maxWidth: '100%' },
+                },
+                [
+                  m('img.AchievementImageCropper-img', {
+                    src: this.crop.src,
+                    onload: (e) => {
+                      this._initCropImg(e.target);
+                    },
+                    oncreate: (vnode) => {
+                      // 缓存图片时 onload 可能在 oncreate 之前已触发,这里兜底
+                      if (vnode.dom.complete && vnode.dom.naturalWidth) {
+                        this._initCropImg(vnode.dom);
+                      }
+                    },
+                  }),
+                  this.cropImgEl
+                    ? m('.AchievementImageCropper-box', {
+                        style: (() => {
+                          const img = this.cropImgEl;
+                          const w = img.clientWidth;
+                          const h = img.clientHeight;
+                          const side = (this.crop.size / 100) * Math.min(w, h);
+                          const x = (this.crop.x / 100) * w;
+                          const y = (this.crop.y / 100) * h;
+                          return {
+                            position: 'absolute',
+                            left: x + 'px',
+                            top: y + 'px',
+                            width: side + 'px',
+                            height: side + 'px',
+                            border: '2px solid #fff',
+                            // 用超大的 box-shadow 在方框外侧压暗,实现"除选定区外变暗"
+                            boxShadow: '0 0 0 9999px rgba(0,0,0,0.5)',
+                            cursor: 'move',
+                            boxSizing: 'border-box',
+                          };
+                        })(),
+                        onmousedown: (e) => {
+                          e.preventDefault();
+                          this.beginCropDrag(e);
+                        },
+                      })
+                    : null,
+                ]
+              ),
               m('.AchievementImageCropper-actions', [
-                m(Button, { className: 'Button Button--primary', disabled: this.cropping, onclick: () => this.confirmCrop() },
-                  this.cropping ? trans('crop_uploading') : trans('crop_confirm')),
+                m(
+                  Button,
+                  { className: 'Button Button--primary', disabled: this.cropping, onclick: () => this.confirmCrop() },
+                  this.cropping ? trans('crop_uploading') : trans('crop_confirm')
+                ),
                 m(Button, { className: 'Button', disabled: this.cropping, onclick: () => this.cancelCrop() }, trans('crop_cancel')),
               ]),
               this.cropError ? m('.alert.alert-danger', this.cropError) : null,
@@ -575,12 +621,22 @@ export default class AchievementManager extends Component {
           : null,
         m('.Form-group', [
           m('label', trans('series')),
-          m('input.FormControl', { type: 'text', value: this.form.series, oninput: withAttr('value', (v) => (this.form.series = v)), placeholder: 'A' }),
+          m('input.FormControl', {
+            type: 'text',
+            value: this.form.series,
+            oninput: withAttr('value', (v) => (this.form.series = v)),
+            placeholder: 'A',
+          }),
           m('small.helpText', trans('series_help')),
         ]),
         m('.Form-group', [
           m('label', trans('series_name')),
-          m('input.FormControl', { type: 'text', value: this.form.seriesName, oninput: withAttr('value', (v) => (this.form.seriesName = v)), placeholder: 'A系列' }),
+          m('input.FormControl', {
+            type: 'text',
+            value: this.form.seriesName,
+            oninput: withAttr('value', (v) => (this.form.seriesName = v)),
+            placeholder: 'A系列',
+          }),
           m('small.helpText', trans('series_name_help')),
         ]),
         m('.Form-group', [
@@ -590,7 +646,9 @@ export default class AchievementManager extends Component {
         ]),
         m('.Form-group', [
           m('label', trans('parent')),
-          m('select.FormControl', { value: this.form.parentId, onchange: withAttr('value', (v) => (this.form.parentId = v)) },
+          m(
+            'select.FormControl',
+            { value: this.form.parentId, onchange: withAttr('value', (v) => (this.form.parentId = v)) },
             parentOptions.map((o) => m('option', { value: o.value, selected: String(this.form.parentId) === String(o.value) }, o.label))
           ),
         ]),
@@ -606,7 +664,10 @@ export default class AchievementManager extends Component {
       ]),
 
       m('hr'),
-      m('.AchievementManager-groups', Object.keys(groups).map((k) => renderGroup(k))),
+      m(
+        '.AchievementManager-groups',
+        Object.keys(groups).map((k) => renderGroup(k))
+      ),
     ]);
   }
 }

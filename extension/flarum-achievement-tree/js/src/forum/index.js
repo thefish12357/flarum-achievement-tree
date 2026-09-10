@@ -38,10 +38,14 @@ app.initializers.add('thefish12357-achievement-tree', () => {
 
     items.add(
       'achievements',
-      m(LinkButton, {
-        href: app.route('user.achievements', { username: user.slug() }),
-        icon: 'fas fa-trophy',
-      }, app.translator.trans('thefish12357-achievement-tree.forum.user_page.nav')),
+      m(
+        LinkButton,
+        {
+          href: app.route('user.achievements', { username: user.slug() }),
+          icon: 'fas fa-trophy',
+        },
+        app.translator.trans('thefish12357-achievement-tree.forum.user_page.nav')
+      ),
       50
     );
   });

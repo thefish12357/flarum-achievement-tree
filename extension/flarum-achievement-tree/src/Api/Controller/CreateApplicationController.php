@@ -51,11 +51,21 @@ class CreateApplicationController extends AbstractCreateController
             throw new ValidationException(['achievementId' => '你已提交过申请,请等待审核']);
         }
 
+        $proofFiles = Arr::get($data, 'proofFiles', []);
+        if (! is_array($proofFiles)) {
+            throw new ValidationException(['proofFiles' => '证明材料格式不正确']);
+        }
+        foreach ($proofFiles as $url) {
+            if (! is_string($url) || ! preg_match('#^https://#i', $url) || ! filter_var($url, FILTER_VALIDATE_URL)) {
+                throw new ValidationException(['proofFiles' => '证明材料链接必须是 https 开头的有效 URL']);
+            }
+        }
+
         $application = new AchievementApplication();
         $application->user_id = $actor->id;
         $application->achievement_id = $achievement->id;
         $application->message = Arr::get($data, 'message');
-        $application->proof_files = Arr::get($data, 'proofFiles', []);
+        $application->proof_files = $proofFiles;
         $application->status = AchievementApplication::PENDING;
         $application->save();
 

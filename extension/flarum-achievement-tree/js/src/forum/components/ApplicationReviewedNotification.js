@@ -11,17 +11,13 @@ export default class ApplicationReviewedNotification extends Notification {
 
   href() {
     const user = app.session.user;
-    return user && user.slug()
-      ? app.route('user.achievements', { username: user.slug() })
-      : app.route('notifications');
+    return user && user.slug() ? app.route('user.achievements', { username: user.slug() }) : app.route('notifications');
   }
 
   content() {
     const data = this.attrs.notification.content() || {};
     const key =
-      data.status === 'approved'
-        ? 'notifications.achievement_application_approved_text'
-        : 'notifications.achievement_application_rejected_text';
+      data.status === 'approved' ? 'notifications.achievement_application_approved_text' : 'notifications.achievement_application_rejected_text';
 
     return app.translator.trans(`thefish12357-achievement-tree.forum.${key}`, {
       name: data.achievementName || '',

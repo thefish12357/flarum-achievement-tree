@@ -20,6 +20,8 @@
 4. 前端构建:`cd extension/flarum-achievement-tree/js && npm install && npm run build`(产物输出到 `js/dist`)。
 5. 后端刷新:`docker exec flarum-php bash -c "cd /var/www/flarum && php flarum migrate && php flarum cache:clear"`。
 
+> ⚠️ `docker-compose.yml` / `.env.example` 中的数据库默认密码 `flarum` **仅用于本地开发,严禁用于生产环境**;正式部署前请改为强密码。
+
 ## 进度
 
 - 成就树展示、用户资料页成就树、申请/审核(含独立驳回理由)、审核结果通知等已实现,仍在打磨 UI / 国际化与边界场景。

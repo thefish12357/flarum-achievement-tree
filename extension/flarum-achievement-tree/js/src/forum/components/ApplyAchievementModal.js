@@ -22,9 +22,12 @@ export default class ApplyAchievementModal extends Modal {
   content() {
     return [
       m('.Modal-body', [
-        m('p', app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_hint', {
-          name: this.attrs.achievement.name(),
-        })),
+        m(
+          'p',
+          app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_hint', {
+            name: this.attrs.achievement.name(),
+          })
+        ),
         m('.Form-group', [
           m('textarea.FormControl', {
             rows: 4,
@@ -38,17 +41,23 @@ export default class ApplyAchievementModal extends Modal {
         this.error ? m('.Form-group', m('p.helpText.error', this.error)) : null,
       ]),
       m('.Modal-footer', [
-        Button.component({
-          type: 'submit',
-          className: 'Button Button--primary',
-          loading: this.loading,
-          disabled: !this.message || !this.message.trim(),
-        }, app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_submit')),
+        Button.component(
+          {
+            type: 'submit',
+            className: 'Button Button--primary',
+            loading: this.loading,
+            disabled: !this.message || !this.message.trim(),
+          },
+          app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_submit')
+        ),
         ' ',
-        Button.component({
-          className: 'Button',
-          onclick: () => this.hide(),
-        }, app.translator.trans('thefish12357-achievement-tree.forum.cancel')),
+        Button.component(
+          {
+            className: 'Button',
+            onclick: () => this.hide(),
+          },
+          app.translator.trans('thefish12357-achievement-tree.forum.cancel')
+        ),
       ]),
     ];
   }
@@ -82,9 +91,9 @@ export default class ApplyAchievementModal extends Modal {
     m.redraw();
 
     // ⚠ 属性必须传给 save(attributes),不能塞进 createRecord():
-//   Model.save 无参调用时 attributes 为 undefined,内部 attributes.relationships 会同步抛错,
-//   Promise 永不落定 → 提交按钮永远转圈(坑36)
-const application = app.store.createRecord('achievement-applications');
+    //   Model.save 无参调用时 attributes 为 undefined,内部 attributes.relationships 会同步抛错,
+    //   Promise 永不落定 → 提交按钮永远转圈(坑36)
+    const application = app.store.createRecord('achievement-applications');
 
     application
       .save({
@@ -98,9 +107,7 @@ const application = app.store.createRecord('achievement-applications');
       })
       .catch((e) => {
         this.loading = false;
-        const detail =
-          (e && e.errors && e.errors[0] && e.errors[0].detail) ||
-          (e && e.message);
+        const detail = (e && e.errors && e.errors[0] && e.errors[0].detail) || (e && e.message);
         this.error = detail || app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_error');
         m.redraw();
       });

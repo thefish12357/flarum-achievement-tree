@@ -109,46 +109,61 @@ export default class ApplicationReviewer extends Component {
         ? m('p', trans('empty'))
         : m(
             'table.ApplicationReviewer-table',
-            m('thead', m('tr', [
-              m('th', trans('user')),
-              m('th', trans('achievement')),
-              m('th', trans('message')),
-              m('th', trans('proof')),
-              m('th', trans('status')),
-              m('th', trans('review_comment')),
-              m('th', trans('rejection_reason')),
-              m('th', trans('actions')),
-            ])),
-            m('tbody', this.applications.map((application) => {
-              const user = application.user();
-              const achievement = application.achievement();
-              const proofs = application.proofFiles() || [];
+            m(
+              'thead',
+              m('tr', [
+                m('th', trans('user')),
+                m('th', trans('achievement')),
+                m('th', trans('message')),
+                m('th', trans('proof')),
+                m('th', trans('status')),
+                m('th', trans('review_comment')),
+                m('th', trans('rejection_reason')),
+                m('th', trans('actions')),
+              ])
+            ),
+            m(
+              'tbody',
+              this.applications.map((application) => {
+                const user = application.user();
+                const achievement = application.achievement();
+                const proofs = application.proofFiles() || [];
 
-              return m('tr', [
-                m('td', user ? user.displayName() : `#${application.userId()}`),
-                m('td', achievement ? achievement.name() : `#${application.achievementId()}`),
-                m('td', application.message() || '-'),
-                m('td', proofs.length
-                  ? proofs.map((url) => m('a', { href: url, target: '_blank', rel: 'noopener' }, m('img.ApplicationProof', { src: url })))
-                  : '-'),
-                m('td', this.statusLabel(application.status())),
-                m('td', m('input.FormControl', {
-                  type: 'text',
-                  value: this.comments[application.id()] || '',
-                  oninput: withAttr('value', (v) => (this.comments[application.id()] = v)),
-                })),
-                m('td', m('input.FormControl', {
-                  type: 'text',
-                  placeholder: trans('rejection_reason_placeholder'),
-                  value: this.reasons[application.id()] || '',
-                  oninput: withAttr('value', (v) => (this.reasons[application.id()] = v)),
-                })),
-                m('td', [
-                  m(Button, { className: 'Button Button--primary', onclick: () => this.review(application, 'approved') }, trans('approve')),
-                  m(Button, { className: 'Button Button--danger', onclick: () => this.review(application, 'rejected') }, trans('reject')),
-                ]),
-              ]);
-            }))
+                return m('tr', [
+                  m('td', user ? user.displayName() : `#${application.userId()}`),
+                  m('td', achievement ? achievement.name() : `#${application.achievementId()}`),
+                  m('td', application.message() || '-'),
+                  m(
+                    'td',
+                    proofs.length
+                      ? proofs.map((url) => m('a', { href: url, target: '_blank', rel: 'noopener' }, m('img.ApplicationProof', { src: url })))
+                      : '-'
+                  ),
+                  m('td', this.statusLabel(application.status())),
+                  m(
+                    'td',
+                    m('input.FormControl', {
+                      type: 'text',
+                      value: this.comments[application.id()] || '',
+                      oninput: withAttr('value', (v) => (this.comments[application.id()] = v)),
+                    })
+                  ),
+                  m(
+                    'td',
+                    m('input.FormControl', {
+                      type: 'text',
+                      placeholder: trans('rejection_reason_placeholder'),
+                      value: this.reasons[application.id()] || '',
+                      oninput: withAttr('value', (v) => (this.reasons[application.id()] = v)),
+                    })
+                  ),
+                  m('td', [
+                    m(Button, { className: 'Button Button--primary', onclick: () => this.review(application, 'approved') }, trans('approve')),
+                    m(Button, { className: 'Button Button--danger', onclick: () => this.review(application, 'rejected') }, trans('reject')),
+                  ]),
+                ]);
+              })
+            )
           ),
     ]);
   }
