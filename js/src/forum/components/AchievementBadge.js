@@ -16,10 +16,10 @@ export default class AchievementBadge extends Component {
       {
         type: 'button',
         onclick: () =>
-        app.modal.show(AchievementModal, {
-          achievement,
-          proofImages: this.attrs.achievement.proofImages() || [],
-        }),
+          app.modal.show(AchievementModal, {
+            achievement,
+            proofImages: this.attrs.achievement.proofImages() || [],
+          }),
       },
       m(Tooltip, { text: achievement.name() }, content)
     );

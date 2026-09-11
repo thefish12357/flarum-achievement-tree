@@ -143,7 +143,7 @@ export default class ApplicationReviewer extends Component {
                   m('td', application.message() || '-'),
                   m(
                     'td',
-                    (proofs.length || proofImages.length)
+                    proofs.length || proofImages.length
                       ? [
                           proofs.map((url) => m('a', { href: url, target: '_blank', rel: 'noopener' }, m('img.ApplicationProof', { src: url }))),
                           proofImages.map((url) => m('a', { href: url, target: '_blank', rel: 'noopener' }, m('img.ApplicationProof', { src: url }))),

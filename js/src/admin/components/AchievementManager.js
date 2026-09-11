@@ -294,18 +294,14 @@ export default class AchievementManager extends Component {
                 },
                 types.map((t) => m('option', { value: t.ruleType }, t.label))
               ),
-              ...((def ? def.fields : []).map((f) =>
+              ...(def ? def.fields : []).map((f) =>
                 this.renderConditionField(f, c, (val) => {
                   const next = conds.slice();
                   next[i] = Object.assign({}, c, { [f.key]: val });
                   update(next);
                 })
-              )),
-              m(
-                Button,
-                { className: 'Button Button--link', type: 'button', onclick: () => update(conds.filter((_, j) => j !== i)) },
-                '删除'
               ),
+              m(Button, { className: 'Button Button--link', type: 'button', onclick: () => update(conds.filter((_, j) => j !== i)) }, '删除'),
             ]);
           })
         : m('small.helpText', '尚未添加条件,请点击下方按钮添加。'),
@@ -332,9 +328,7 @@ export default class AchievementManager extends Component {
         },
         [
           m('option', { value: '' }, trans('select_role')),
-          ...this.groups.map((g) =>
-            m('option', { value: String(g.id()) }, g.nameSingular() || g.namePlural() || `#${g.id()}`)
-          ),
+          ...this.groups.map((g) => m('option', { value: String(g.id()) }, g.nameSingular() || g.namePlural() || `#${g.id()}`)),
         ]
       );
     }
@@ -367,9 +361,7 @@ export default class AchievementManager extends Component {
           },
           [
             m('option', { value: '' }, trans('select_role')),
-            ...this.groups.map((g) =>
-              m('option', { value: String(g.id()) }, g.nameSingular() || g.namePlural() || `#${g.id()}`)
-            ),
+            ...this.groups.map((g) => m('option', { value: String(g.id()) }, g.nameSingular() || g.namePlural() || `#${g.id()}`)),
           ]
         ),
       ]);
@@ -562,11 +554,7 @@ export default class AchievementManager extends Component {
 
     // 限制最小尺寸,并保证放大后不会超出图片边界
     const minSize = 10;
-    const maxSize = Math.min(
-      100,
-      ((100 - this.crop.x) * rect.width) / minSide,
-      ((100 - this.crop.y) * rect.height) / minSide
-    );
+    const maxSize = Math.min(100, ((100 - this.crop.x) * rect.width) / minSide, ((100 - this.crop.y) * rect.height) / minSide);
     this.crop.size = Math.max(minSize, Math.min(maxSize, newSize));
     m.redraw();
   }
@@ -963,10 +951,7 @@ export default class AchievementManager extends Component {
                 }
               }),
             },
-            [
-              m('option', { value: 'manual' }, trans('manual')),
-              m('option', { value: 'auto' }, trans('auto')),
-            ]
+            [m('option', { value: 'manual' }, trans('manual')), m('option', { value: 'auto' }, trans('auto'))]
           ),
           m('small.helpText', trans('unlock_mode_help')),
         ]),

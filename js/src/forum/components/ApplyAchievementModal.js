@@ -27,21 +27,28 @@ export default class ApplyAchievementModal extends Modal {
     const proofThumbs = this.proofImages.map((url, i) =>
       m('.AchievementProofThumb', [
         m('img', { src: url, alt: '' }),
-        m('button.AchievementProofThumb-remove', {
-          type: 'button',
-          title: app.translator.trans('thefish12357-achievement-tree.forum.user_page.proof_remove'),
-          onclick: () => {
-            this.proofImages = this.proofImages.filter((_, idx) => idx !== i);
+        m(
+          'button.AchievementProofThumb-remove',
+          {
+            type: 'button',
+            title: app.translator.trans('thefish12357-achievement-tree.forum.user_page.proof_remove'),
+            onclick: () => {
+              this.proofImages = this.proofImages.filter((_, idx) => idx !== i);
+            },
           },
-        }, '×'),
+          '×'
+        ),
       ])
     );
 
     return [
       m('.Modal-body', [
-        m('p', app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_hint', {
-          name: this.attrs.achievement.name(),
-        })),
+        m(
+          'p',
+          app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_hint', {
+            name: this.attrs.achievement.name(),
+          })
+        ),
         m('.Form-group', [
           m('textarea.FormControl', {
             rows: 4,
@@ -59,7 +66,9 @@ export default class ApplyAchievementModal extends Modal {
             type: 'file',
             accept: 'image/*',
             style: { display: 'none' },
-            oncreate: (v) => { this.fileInput = v.dom; },
+            oncreate: (v) => {
+              this.fileInput = v.dom;
+            },
             onchange: (e) => this.onSelectFile(e),
           }),
           Button.component(
@@ -67,11 +76,13 @@ export default class ApplyAchievementModal extends Modal {
               type: 'button',
               className: 'Button',
               loading: this.uploading,
-              onclick: () => { if (this.fileInput) this.fileInput.click(); },
+              onclick: () => {
+                if (this.fileInput) this.fileInput.click();
+              },
             },
-            (this.uploading
+            this.uploading
               ? app.translator.trans('thefish12357-achievement-tree.forum.user_page.proof_uploading')
-              : app.translator.trans('thefish12357-achievement-tree.forum.user_page.upload_proof'))
+              : app.translator.trans('thefish12357-achievement-tree.forum.user_page.upload_proof')
           ),
           proofThumbs.length ? m('.AchievementProofThumbs', proofThumbs) : null,
         ]),
@@ -84,7 +95,7 @@ export default class ApplyAchievementModal extends Modal {
             type: 'submit',
             className: 'Button Button--primary',
             loading: this.loading,
-            disabled: (!(this.message.trim() || this.proofImages.length) || this.uploading),
+            disabled: !(this.message.trim() || this.proofImages.length) || this.uploading,
           },
           app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_submit')
         ),

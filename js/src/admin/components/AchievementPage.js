@@ -70,12 +70,7 @@ export default class AchievementPage extends ExtensionPage {
     })
       .then(() => {
         this.loading = false;
-        app.alerts.show(
-          Alert.component(
-            { type: 'success' },
-            app.translator.trans('thefish12357-achievement-tree.admin.settings.saved')
-          )
-        );
+        app.alerts.show(Alert.component({ type: 'success' }, app.translator.trans('thefish12357-achievement-tree.admin.settings.saved')));
         m.redraw();
       })
       .catch(() => {

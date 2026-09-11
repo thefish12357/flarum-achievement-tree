@@ -48,8 +48,17 @@ export default class AchievementModal extends Modal {
           parent ? m('li', [m('strong', `${trans('parent')}: `), parent.name()]) : null,
           m('li', [
             m('strong', `${trans('proof')}: `),
-            (this.attrs.proofImages && this.attrs.proofImages.length)
-              ? m('.AchievementModal-proof', this.attrs.proofImages.map((url) => m('a.AchievementModal-proofLink', { href: url, target: '_blank', rel: 'noopener' }, m('img.AchievementModal-proofImg', { src: url, alt: 'proof' }))))
+            this.attrs.proofImages && this.attrs.proofImages.length
+              ? m(
+                  '.AchievementModal-proof',
+                  this.attrs.proofImages.map((url) =>
+                    m(
+                      'a.AchievementModal-proofLink',
+                      { href: url, target: '_blank', rel: 'noopener' },
+                      m('img.AchievementModal-proofImg', { src: url, alt: 'proof' })
+                    )
+                  )
+                )
               : trans('proof_pending'),
           ]),
         ]),
