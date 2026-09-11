@@ -14,6 +14,7 @@
         "source": "https://github.com/thefish12357/flarum-achievement-tree"
     },
     "require": {
+        "php": ">=8.0",
         "flarum/core": "^1.8"
     },
     "require-dev": {
