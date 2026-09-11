@@ -2,17 +2,15 @@
 
 ![Release](https://img.shields.io/github/v/release/thefish12357/flarum-achievement-tree)
 
-> **v0.1.0 已发布** — M1–M10 已完成,核心功能已可用,可作为 Flarum 扩展安装部署。后续会持续扩展自动解锁规则与 UI 细节。
-
 一个 [Flarum](https://flarum.org) 扩展:为论坛添加用户「成就树」(徽章)功能。已实现:帖子下方成就徽章行、用户资料页成就树、成就申请与审核(含驳回理由)、审核结果通知、自动解锁规则等。
 
 ## 仓库结构
 
-| 路径 | 说明 |
-| --- | --- |
-| `extension/flarum-achievement-tree/` | 扩展源码(PHP 后端 + JS 前端 + 迁移/语言包) |
-| `docker-compose.yml` / `nginx/` / `php/` | 本地开发环境(Docker) |
-| `flarum/` | 本地运行的 Flarum 站点(由 composer 安装,**不纳入版本控制**,含 vendor / storage / 配置与密钥) |
+| 路径                                     | 说明                                                                                         |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `extension/flarum-achievement-tree/`     | 扩展源码(PHP 后端 + JS 前端 + 迁移/语言包)                                                   |
+| `docker-compose.yml` / `nginx/` / `php/` | 本地开发环境(Docker)                                                                         |
+| `flarum/`                                | 本地运行的 Flarum 站点(由 composer 安装,**不纳入版本控制**,含 vendor / storage / 配置与密钥) |
 
 ## 本地开发
 
@@ -23,10 +21,6 @@
 5. 后端刷新:`docker exec flarum-php bash -c "cd /var/www/flarum && php flarum migrate && php flarum cache:clear"`。
 
 > ⚠️ `docker-compose.yml` / `.env.example` 中的数据库默认密码 `flarum` **仅用于本地开发,严禁用于生产环境**;正式部署前请改为强密码。
-
-## 进度
-
-- [x] M1 骨架 → M2 本地接入 → M3 数据层 → M4 API/Policy → M5 后台 → M6 前台图标行 → M7 资料页成就树 → M8 申请/审核证明材料 → M9 国际化与样式 → M10 Git 发布 (仓库已公开,`AGENTS.md` 已从 git 历史移除)
 
 ## License
 
