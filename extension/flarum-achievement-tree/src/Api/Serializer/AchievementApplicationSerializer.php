@@ -36,6 +36,7 @@ class AchievementApplicationSerializer extends AbstractSerializer
             'achievementId' => (int) $application->achievement_id,
             'message' => $application->message,
             'proofFiles' => $application->proof_files ?? [],
+            'proofImages' => $application->proof_images ?? [],
             'status' => $application->status,
             'reviewComment' => $application->review_comment,
             'rejectionReason' => $application->rejection_reason,

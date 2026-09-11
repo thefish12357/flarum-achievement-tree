@@ -5,8 +5,12 @@ export default class ApplyAchievementModal extends Modal {
   oninit(vnode) {
     super.oninit(vnode);
     this.message = '';
+    this.proofImages = [];
+    this.uploading = false;
+    this.uploadError = null;
     this.loading = false;
     this.error = null;
+    this.fileInput = null;
   }
 
   className() {
@@ -20,14 +24,24 @@ export default class ApplyAchievementModal extends Modal {
   }
 
   content() {
+    const proofThumbs = this.proofImages.map((url, i) =>
+      m('.AchievementProofThumb', [
+        m('img', { src: url, alt: '' }),
+        m('button.AchievementProofThumb-remove', {
+          type: 'button',
+          title: app.translator.trans('thefish12357-achievement-tree.forum.user_page.proof_remove'),
+          onclick: () => {
+            this.proofImages = this.proofImages.filter((_, idx) => idx !== i);
+          },
+        }, '×'),
+      ])
+    );
+
     return [
       m('.Modal-body', [
-        m(
-          'p',
-          app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_hint', {
-            name: this.attrs.achievement.name(),
-          })
-        ),
+        m('p', app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_hint', {
+          name: this.attrs.achievement.name(),
+        })),
         m('.Form-group', [
           m('textarea.FormControl', {
             rows: 4,
@@ -38,6 +52,30 @@ export default class ApplyAchievementModal extends Modal {
             },
           }),
         ]),
+        m('.Form-group', [
+          m('label.AchievementApplyModal-uploadLabel', app.translator.trans('thefish12357-achievement-tree.forum.user_page.upload_proof')),
+          m('p.helpText', app.translator.trans('thefish12357-achievement-tree.forum.user_page.proof_blur_hint')),
+          m('input', {
+            type: 'file',
+            accept: 'image/*',
+            style: { display: 'none' },
+            oncreate: (v) => { this.fileInput = v.dom; },
+            onchange: (e) => this.onSelectFile(e),
+          }),
+          Button.component(
+            {
+              type: 'button',
+              className: 'Button',
+              loading: this.uploading,
+              onclick: () => { if (this.fileInput) this.fileInput.click(); },
+            },
+            (this.uploading
+              ? app.translator.trans('thefish12357-achievement-tree.forum.user_page.proof_uploading')
+              : app.translator.trans('thefish12357-achievement-tree.forum.user_page.upload_proof'))
+          ),
+          proofThumbs.length ? m('.AchievementProofThumbs', proofThumbs) : null,
+        ]),
+        this.uploadError ? m('.Form-group', m('p.helpText.error', this.uploadError)) : null,
         this.error ? m('.Form-group', m('p.helpText.error', this.error)) : null,
       ]),
       m('.Modal-footer', [
@@ -46,7 +84,7 @@ export default class ApplyAchievementModal extends Modal {
             type: 'submit',
             className: 'Button Button--primary',
             loading: this.loading,
-            disabled: !this.message || !this.message.trim(),
+            disabled: (!(this.message.trim() || this.proofImages.length) || this.uploading),
           },
           app.translator.trans('thefish12357-achievement-tree.forum.user_page.apply_submit')
         ),
@@ -83,8 +121,40 @@ export default class ApplyAchievementModal extends Modal {
     }, 500);
   }
 
+  async onSelectFile(e) {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    this.uploading = true;
+    this.uploadError = null;
+    m.redraw();
+
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const api = (app.forum && app.forum.attribute('apiUrl')) || '/api';
+      const res = await app.request({
+        method: 'POST',
+        url: `${api}/achievement-proof-images`,
+        body: fd,
+      });
+      if (res && res.url) {
+        this.proofImages = [...this.proofImages, res.url];
+      } else {
+        this.uploadError = app.translator.trans('thefish12357-achievement-tree.forum.user_page.proof_upload_error');
+      }
+    } catch (err) {
+      const detail = (err && err.errors && err.errors[0] && err.errors[0].detail) || (err && err.message) || '';
+      this.uploadError = detail || app.translator.trans('thefish12357-achievement-tree.forum.user_page.proof_upload_error');
+    } finally {
+      this.uploading = false;
+      if (e.target) e.target.value = '';
+      m.redraw();
+    }
+  }
+
   submit() {
-    if (!this.message || !this.message.trim()) return;
+    if (!(this.message.trim() || this.proofImages.length)) return;
 
     this.loading = true;
     this.error = null;
@@ -94,12 +164,14 @@ export default class ApplyAchievementModal extends Modal {
     //   Model.save 无参调用时 attributes 为 undefined,内部 attributes.relationships 会同步抛错,
     //   Promise 永不落定 → 提交按钮永远转圈(坑36)
     const application = app.store.createRecord('achievement-applications');
+    const attributes = {
+      achievementId: this.attrs.achievement.id(),
+    };
+    if (this.message.trim()) attributes.message = this.message.trim();
+    if (this.proofImages.length) attributes.proofImages = this.proofImages;
 
     application
-      .save({
-        achievementId: this.attrs.achievement.id(),
-        message: this.message.trim(),
-      })
+      .save(attributes)
       .then(() => {
         this.loading = false;
         this.hide();

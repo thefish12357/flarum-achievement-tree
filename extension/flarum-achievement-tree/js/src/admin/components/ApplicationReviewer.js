@@ -43,6 +43,13 @@ export default class ApplicationReviewer extends Component {
   }
 
   async review(application, status) {
+    // 驳回必须填写驳回理由,未填则提示并阻止提交
+    if (status === 'rejected' && !(this.reasons[application.id()] || '').trim()) {
+      this.notice = trans('reject_reason_required');
+      m.redraw();
+      return;
+    }
+
     try {
       const attributes = { status };
 
@@ -128,6 +135,7 @@ export default class ApplicationReviewer extends Component {
                 const user = application.user();
                 const achievement = application.achievement();
                 const proofs = application.proofFiles() || [];
+                const proofImages = application.proofImages() || [];
 
                 return m('tr', [
                   m('td', user ? user.displayName() : `#${application.userId()}`),
@@ -135,8 +143,11 @@ export default class ApplicationReviewer extends Component {
                   m('td', application.message() || '-'),
                   m(
                     'td',
-                    proofs.length
-                      ? proofs.map((url) => m('a', { href: url, target: '_blank', rel: 'noopener' }, m('img.ApplicationProof', { src: url })))
+                    (proofs.length || proofImages.length)
+                      ? [
+                          proofs.map((url) => m('a', { href: url, target: '_blank', rel: 'noopener' }, m('img.ApplicationProof', { src: url }))),
+                          proofImages.map((url) => m('a', { href: url, target: '_blank', rel: 'noopener' }, m('img.ApplicationProof', { src: url }))),
+                        ]
                       : '-'
                   ),
                   m('td', this.statusLabel(application.status())),

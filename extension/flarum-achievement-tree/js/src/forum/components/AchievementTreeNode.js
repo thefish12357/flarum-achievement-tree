@@ -6,7 +6,7 @@ const trans = (key) => app.translator.trans(`thefish12357-achievement-tree.forum
 
 export default class AchievementTreeNode extends Component {
   view() {
-    const { achievement, earnedInfo, isOwner, isTopEarned, onToggleDisplay, onApply } = this.attrs;
+    const { achievement, earnedInfo, isOwner, onToggleDisplay, onApply } = this.attrs;
     const info = earnedInfo[achievement.id()];
     const earned = !!info;
     const displayed = earned ? !!info.isDisplayed : false;
@@ -22,14 +22,12 @@ export default class AchievementTreeNode extends Component {
         action = m(
           'label.AchievementTreeNode-display',
           {
-            className: isTopEarned ? '' : 'is-disabled',
             onclick: (e) => e.stopPropagation(),
           },
           [
             m('input', {
               type: 'checkbox',
               checked: displayed,
-              disabled: !isTopEarned,
               onchange: () => onToggleDisplay(achievement),
             }),
             m('span', trans('user_page.display_toggle')),
@@ -54,7 +52,7 @@ export default class AchievementTreeNode extends Component {
       '.AchievementTreeNode-card',
       {
         className: earned ? 'is-earned' : 'is-locked',
-        onclick: () => app.modal.show(AchievementModal, { achievement }),
+        onclick: () => app.modal.show(AchievementModal, { achievement, proofImages: (info && info.proofImages) || [] }),
         title: achievement.name(),
       },
       [

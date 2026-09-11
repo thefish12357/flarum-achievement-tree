@@ -287,3 +287,68 @@
     background: @body-bg;
   }
 }
+
+.AchievementApplyModal-uploadLabel {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.AchievementProofThumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.AchievementProofThumb {
+  position: relative;
+  display: inline-block;
+
+  img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid @control-color;
+  }
+
+  &-remove {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #ef4444;
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+  }
+}
+
+.AchievementModal {
+  &-proof {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  &-proofLink {
+    display: inline-block;
+    cursor: zoom-in;
+  }
+
+  &-proofImg {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid @control-color;
+  }
+}

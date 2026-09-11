@@ -5,6 +5,7 @@ export default class AchievementApplication extends Model {
   achievementId = Model.attribute('achievementId');
   message = Model.attribute('message');
   proofFiles = Model.attribute('proofFiles');
+  proofImages = Model.attribute('proofImages');
   status = Model.attribute('status');
   reviewComment = Model.attribute('reviewComment');
   reviewedAt = Model.attribute('reviewedAt', Model.transformDate);

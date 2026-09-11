@@ -22,6 +22,7 @@ use Flarum\User\User;
  * @property int $achievement_id
  * @property string|null $message
  * @property array|null $proof_files
+ * @property array|null $proof_images
  * @property string $status  pending|approved|rejected
  * @property int|null $reviewer_id
  * @property \Carbon\Carbon|null $reviewed_at
@@ -45,6 +46,7 @@ class AchievementApplication extends AbstractModel
         'achievement_id' => 'int',
         'reviewer_id' => 'int',
         'proof_files' => 'array',
+        'proof_images' => 'array',
     ];
 
     protected $dates = ['reviewed_at', 'created_at', 'updated_at'];
@@ -54,6 +56,7 @@ class AchievementApplication extends AbstractModel
         'achievement_id',
         'message',
         'proof_files',
+        'proof_images',
         'status',
         'review_comment',
         'rejection_reason',

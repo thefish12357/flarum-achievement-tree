@@ -41,6 +41,13 @@ return [
                 'root' => $paths->public.'/assets/badges',
                 'url' => $url->to('forum')->path('assets/badges'),
             ];
+        })
+        ->disk('achievement-tree-proofs', function (Paths $paths, UrlGenerator $url) {
+            return [
+                'driver' => 'local',
+                'root' => $paths->public.'/assets/achievement-proofs',
+                'url' => $url->to('forum')->path('assets/achievement-proofs'),
+            ];
         }),
 
     (new Extend\Routes('api'))
@@ -55,6 +62,7 @@ return [
         ->post('/achievements/{id}/display', 'achievements.display', Controller\ToggleAchievementDisplayController::class)
         ->get('/achievement-applications', 'achievement-applications.index', Controller\ListApplicationsController::class)
         ->post('/achievement-applications', 'achievement-applications.create', Controller\CreateApplicationController::class)
+        ->post('/achievement-proof-images', 'achievement-applications.upload-proof', Controller\UploadApplicationProofImageController::class)
         ->patch('/achievement-applications/{id}', 'achievement-applications.review', Controller\ReviewApplicationController::class),
 
     // 用户与成就多对多
@@ -86,7 +94,20 @@ return [
                 }
             }
 
-            return $achievements->map(function ($achievement) use ($awardedMap) {
+            // 该用户各成就的"申请证明材料图片",一并内嵌到成就数据,供前端"获得证明"展示
+            $proofMap = [];
+            $proofRows = AchievementApplication::query()
+                ->where('user_id', $user->id)
+                ->whereNotNull('proof_images')
+                ->get();
+            foreach ($proofRows as $proofRow) {
+                $p = $proofRow->proof_images;
+                if (is_array($p) && count($p)) {
+                    $proofMap[$proofRow->achievement_id] = $p;
+                }
+            }
+
+            return $achievements->map(function ($achievement) use ($awardedMap, $proofMap) {
                 $info = $awardedMap[$achievement->id] ?? null;
                 $awardedAt = ($info && $info['at'])
                     ? \Carbon\Carbon::parse($info['at'])->toIso8601String()
@@ -110,6 +131,7 @@ return [
                         'isHidden' => (bool) $achievement->is_hidden,
                         'awardedAt' => $awardedAt,
                         'isDisplayed' => $isDisplayed,
+                        'proofImages' => $proofMap[$achievement->id] ?? [],
                     ],
                 ];
             })->values()->all();

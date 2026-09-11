@@ -61,11 +61,33 @@ class CreateApplicationController extends AbstractCreateController
             }
         }
 
+        // 申请证明材料图片:仅允许本站上传的证明图(路径受控,杜绝外链 XSS)
+        $proofImages = Arr::get($data, 'proofImages', []);
+        if (! is_array($proofImages)) {
+            throw new ValidationException(['proofImages' => '证明材料图片格式不正确']);
+        }
+        $proofImages = array_values(array_filter($proofImages, function ($url) {
+            return is_string($url) && $url !== '';
+        }));
+        foreach ($proofImages as $url) {
+            if (! preg_match('#^/assets/achievement-proofs/#', $url)) {
+                throw new ValidationException(['proofImages' => '证明材料图片必须是本站上传的图片']);
+            }
+        }
+
+        $message = Arr::get($data, 'message');
+
+        // 申请描述支持文字和图片:文字与图片至少填一项
+        if (empty($message) && empty($proofImages)) {
+            throw new ValidationException(['message' => '请填写说明或上传证明材料图片(至少一项)']);
+        }
+
         $application = new AchievementApplication();
         $application->user_id = $actor->id;
         $application->achievement_id = $achievement->id;
-        $application->message = Arr::get($data, 'message');
+        $application->message = $message;
         $application->proof_files = $proofFiles;
+        $application->proof_images = $proofImages;
         $application->status = AchievementApplication::PENDING;
         $application->save();
 

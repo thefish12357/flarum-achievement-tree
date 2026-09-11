@@ -46,7 +46,12 @@ export default class AchievementModal extends Modal {
           m('li', [m('strong', `${trans('tier')}: `), String(achievement.tier() || 0)]),
           awarded ? m('li', [m('strong', `${trans('awarded_at')}: `), awarded.toLocaleString()]) : null,
           parent ? m('li', [m('strong', `${trans('parent')}: `), parent.name()]) : null,
-          m('li', [m('strong', `${trans('proof')}: `), trans('proof_pending')]),
+          m('li', [
+            m('strong', `${trans('proof')}: `),
+            (this.attrs.proofImages && this.attrs.proofImages.length)
+              ? m('.AchievementModal-proof', this.attrs.proofImages.map((url) => m('a.AchievementModal-proofLink', { href: url, target: '_blank', rel: 'noopener' }, m('img.AchievementModal-proofImg', { src: url, alt: 'proof' }))))
+              : trans('proof_pending'),
+          ]),
         ]),
       ]),
       m('.Modal-footer', [m(Button, { className: 'Button Button--primary', onclick: () => this.hide() }, trans('close'))]),

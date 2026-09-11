@@ -63,7 +63,8 @@ thefish12357-achievement-tree:
     status: Status
     review_comment: Review comment
     rejection_reason: Rejection reason
-    rejection_reason_placeholder: Reason for rejection (optional)
+    rejection_reason_placeholder: Required when rejecting
+    reject_reason_required: A rejection reason is required. Please fill it in before submitting.
     approve: Approve
     reject: Reject
     status_pending: Pending
@@ -76,6 +77,8 @@ thefish12357-achievement-tree:
     parent: Parent achievement
     close: Close
     cancel: Cancel
+    proof: Proof
+    proof_pending: No proof provided
     notifications:
       achievement_application_approved_text: 'Your application for achievement "{name}" has been approved'
       achievement_application_rejected_text: 'Your application for achievement "{name}" has been rejected'
@@ -95,8 +98,16 @@ thefish12357-achievement-tree:
       apply_submitted: Application submitted.
       apply_error: Failed to submit application.
       display_toggle: Show on posts
+      display_updated: Display preference updated.
       display_error: Failed to update display preference.
       ungrouped: Ungrouped
       expand: Expand
       collapse: Collapse
+      apply_hint_image: You can upload an image as proof (provide at least a description or an image).
+      proof_blur_hint: Please blur or cover sensitive information in the image before uploading.
+      upload_proof: Upload proof image
+      proof_uploading: Uploading…
+      proof_upload_error: Image upload failed, please retry
+      proof_remove: Remove
+      proof_images: Proof images
     # M7 用户资料页成就树 / M8 设置页证明材料

@@ -18,6 +18,7 @@ export default class UserAchievementTree extends Component {
       this.earnedInfo[a.id] = {
         isDisplayed: a.attributes && a.attributes.isDisplayed !== false,
         awardedAt: (a.attributes && a.attributes.awardedAt) || null,
+        proofImages: (a.attributes && a.attributes.proofImages) || [],
       };
     });
     this.earnedIds = new Set(embedded.map((a) => a.id));
@@ -102,7 +103,7 @@ export default class UserAchievementTree extends Component {
 
   /**
    * 切换当前用户对该成就是否在帖子内显示。乐观更新 + 后端持久化。
-   * 注:同一系列只有"最高已获得 tier"卡片会调用此方法(其它低 tier 复选框已禁用)。
+   * 已获得成就可以分别设置,帖子图标行按系列取最高"已显示" tier。
    */
   async toggleDisplay(achievement) {
     const id = achievement.id();
@@ -123,6 +124,7 @@ export default class UserAchievementTree extends Component {
       const cached = app.store.all('achievements');
       const rec = cached && cached.find((r) => String(r.id()) === String(id));
       if (rec) rec.isDisplayed(next);
+      app.alerts.show({ type: 'success' }, trans('user_page.display_updated'));
       m.redraw();
     } catch (e) {
       this.earnedInfo[id] = cur;

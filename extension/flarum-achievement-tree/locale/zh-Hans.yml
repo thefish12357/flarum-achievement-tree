@@ -62,7 +62,8 @@ thefish12357-achievement-tree:
     status: 状态
     review_comment: 审核备注
     rejection_reason: 驳回理由
-    rejection_reason_placeholder: 请填写驳回理由(选填)
+    rejection_reason_placeholder: 驳回时必须填写驳回理由
+    reject_reason_required: 驳回必须填写驳回理由，请先填写再提交
     approve: 通过
     reject: 驳回
     status_pending: 待审核
@@ -75,7 +76,7 @@ thefish12357-achievement-tree:
     tier: 层级
     awarded_at: 获得时间
     proof: 获得证明
-    proof_pending: 证明功能即将上线
+    proof_pending: 暂无证明材料
     parent: 上级成就
     close: 关闭
     cancel: 取消
@@ -98,7 +99,15 @@ thefish12357-achievement-tree:
       apply_submitted: 申请已提交。
       apply_error: 申请提交失败。
       display_toggle: 在帖子内显示
+      display_updated: 显示偏好已更新。
       display_error: 更新显示偏好失败。
       ungrouped: 未分组
       expand: 展开
       collapse: 收起
+      apply_hint_image: 可上传图片作为证明材料(说明与图片至少填一项)。
+      proof_blur_hint: 请自行对上传的图片打马赛克或遮挡敏感信息后再上传。
+      upload_proof: 上传证明材料图片
+      proof_uploading: 上传中…
+      proof_upload_error: 图片上传失败,请重试
+      proof_remove: 移除
+      proof_images: 证明材料图片
