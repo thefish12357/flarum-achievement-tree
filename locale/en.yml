@@ -1,0 +1,126 @@
+thefish12357-achievement-tree:
+  # For more details on the format
+  # Checkout https://docs.flarum.org/extend/i18n.html#appendix-a-standard-key-format
+  admin:
+    settings:
+      title: Upload settings
+      help: Images are stored under the achievement-tree folder inside the site storage directory (not directly exposed via public). The sub-folders below can be adjusted after deployment (letters, digits, dashes and underscores only).
+      badges_path_label: Badge images sub-folder
+      proofs_path_label: Proof images sub-folder
+      submit: Save settings
+      saved: Settings saved
+    manager_title: Achievement Management
+    create_title: Create Achievement
+    edit_title: Edit Achievement
+
+    name: Name
+    description: Description
+    icon: Icon
+    image_url: Image URL
+    image_help: Fill in the full image URL, or click the button below to upload. Square PNG/SVG recommended.
+    upload_image: Upload image
+    uploading: Uploading…
+    upload_error: Upload failed, please retry
+    parent: Parent
+    no_parent: (No parent)
+    series: Series
+    series_help: Achievements in the same series are grouped. In posts only the user's highest rank (highest tier number; 0 = lowest) is shown; others are hidden.
+    tier: Tier
+    tier_help: Higher tier number = higher rank (0 is the lowest tier). In posts, only the top tier per series is shown.
+    add_to_series: Add achievement to this series
+    ungrouped: Ungrouped
+    confirm_save: Confirm save changes to "{name}"?
+    confirm_award: Award "{name}" to user {id}?
+    confirm_revoke: Revoke "{name}" from user {id}?
+    crop_title: Crop image
+    crop_help: Drag the square to move it, drag the bottom-right dot to resize (always square), then click Confirm to upload.
+    crop_confirm: Confirm
+    crop_cancel: Cancel
+    crop_reupload: Re-crop
+    crop_uploading: Uploading crop…
+    crop_incomplete: Please complete or cancel the image crop before saving.
+    unlock_mode: Unlock mode
+    manual: Manual award
+    auto: Auto unlock
+    unlock_mode_help: With "Auto unlock" selected, the achievement is granted automatically when a user satisfies the rule below.
+    rule_type: Rule type
+    select_role: Select a role
+    is_hidden: Hidden achievement
+    hidden: Hidden
+    actions: Actions
+    yes: Yes
+    no: 'No'
+
+    edit: Edit
+    delete: Delete
+    save: Save
+    cancel: Cancel
+    award: Award
+    revoke: Revoke
+
+    award_user_id: User ID for award / revoke
+    award_help: Enter the target user ID first, then click Award or Revoke on a row.
+    award_user_required: Please enter a user ID first.
+    award_user_invalid: User ID must be a positive integer.
+    confirm_delete: Delete this achievement? Users who earned it will lose it.
+
+    applications_title: Achievement Applications
+    filter: Status
+    filter_all: All
+    user: User
+    achievement: Achievement
+    message: Message
+    proof: Proof
+    status: Status
+    review_comment: Review comment
+    rejection_reason: Rejection reason
+    rejection_reason_placeholder: Required when rejecting
+    reject_reason_required: A rejection reason is required. Please fill it in before submitting.
+    approve: Approve
+    reject: Reject
+    status_pending: Pending
+    status_approved: Approved
+    status_rejected: Rejected
+    empty: No applications.
+
+  forum:
+    series: Series
+    tier: Tier
+    awarded_at: Awarded at
+    parent: Parent achievement
+    close: Close
+    cancel: Cancel
+    proof: Proof
+    proof_pending: No proof provided
+    notifications:
+      achievement_application_approved_text: 'Your application for achievement "{name}" has been approved'
+      achievement_application_rejected_text: 'Your application for achievement "{name}" has been rejected'
+      rejection_reason: Rejection reason
+      achievement_unlocked_text: 'You unlocked the achievement "{name}"'
+    user_page:
+      nav: Achievements
+      earned_summary: "Earned {count} achievements"
+      no_achievements: No achievements yet.
+      loading: Loading achievements…
+      load_error: Failed to load achievements.
+      locked: Not yet earned
+      earned: Earned
+      apply: Apply for this
+      apply_title: Apply for {name}
+      apply_hint: Tell us why you deserve "{name}". The reviewer will be notified.
+      apply_placeholder: Describe your achievement (reason, proof links, etc.)
+      apply_submit: Submit application
+      apply_submitted: Application submitted.
+      apply_error: Failed to submit application.
+      display_toggle: Show on posts
+      display_updated: Display preference updated.
+      display_error: Failed to update display preference.
+      ungrouped: Ungrouped
+      expand: Expand
+      collapse: Collapse
+      proof_blur_hint: Please blur or cover sensitive information in the image before uploading.
+      upload_proof: Upload proof image
+      proof_uploading: Uploading…
+      proof_upload_error: Image upload failed, please retry
+      proof_remove: Remove
+    # M7 用户资料页成就树 / M8 设置页证明材料

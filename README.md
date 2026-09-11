@@ -6,21 +6,28 @@
 
 ## 仓库结构
 
-| 路径                                     | 说明                                                                                         |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `extension/flarum-achievement-tree/`     | 扩展源码(PHP 后端 + JS 前端 + 迁移/语言包)                                                   |
-| `docker-compose.yml` / `nginx/` / `php/` | 本地开发环境(Docker)                                                                         |
-| `flarum/`                                | 本地运行的 Flarum 站点(由 composer 安装,**不纳入版本控制**,含 vendor / storage / 配置与密钥) |
+| 路径 | 说明 |
+| --- | --- |
+| `extend.php` / `composer.json` | 扩展入口与包定义 |
+| `src/` | PHP 后端(模型/控制器/序列化/规则引擎/监听器) |
+| `js/` | 前端源码与构建产物(`js/dist` 为编译输出) |
+| `migrations/` | 数据库迁移 |
+| `less/` `locale/` | 样式与语言包 |
+| `flarum/` | 本地运行的 Flarum 站点(由 composer 安装,**不纳入版本控制**,含 vendor / storage / 配置与密钥) |
 
 ## 本地开发
 
-1. 复制环境变量:`cp .env.example .env`(按需修改数据库密码等)。
-2. 安装 Flarum 站点到 `flarum/`(标准 `composer create-project flarum/flarum flarum`),并把本扩展挂载/软链进容器的 `workbench/flarum-achievement-tree`(见 `docker-compose.yml` 的 `php` 服务挂载)。
-3. 启动环境:`docker compose up -d`(站点地址 `http://localhost:8080`)。
-4. 前端构建:`cd extension/flarum-achievement-tree/js && npm install && npm run build`(产物输出到 `js/dist`)。
-5. 后端刷新:`docker exec flarum-php bash -c "cd /var/www/flarum && php flarum migrate && php flarum cache:clear"`。
+1. 安装 Flarum 站点到 `flarum/`(标准 `composer create-project flarum/flarum flarum`),通过 composer 的 path 仓库或 `workbench` 挂载本扩展后启用。
+2. 前端构建:`cd js && npm install && npm run build`(产物输出到 `js/dist`)。
+3. 后端刷新:`php flarum migrate && php flarum cache:clear`。
 
-> ⚠️ `docker-compose.yml` / `.env.example` 中的数据库默认密码 `flarum` **仅用于本地开发,严禁用于生产环境**;正式部署前请改为强密码。
+## 安装
+
+```bash
+composer require thefish12357/flarum-achievement-tree
+```
+
+然后在后台启用扩展。图片统一保存在站点 `storage/achievement-tree/` 下,子目录可在扩展设置中调整;图片通过 `/achievement-images/{id}` 服务路由对外提供,不经 public 直接暴露。
 
 ## License
 

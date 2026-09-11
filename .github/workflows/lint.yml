@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'extension/flarum-achievement-tree/js/src/**'
+      - 'js/src/**'
   pull_request:
     paths:
-      - 'extension/flarum-achievement-tree/js/src/**'
+      - 'js/src/**'
 
 jobs:
   prettier:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: extension/flarum-achievement-tree/js
+        working-directory: js
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
