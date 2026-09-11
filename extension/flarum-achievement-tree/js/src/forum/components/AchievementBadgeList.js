@@ -83,7 +83,15 @@ export default class AchievementBadgeList extends Component {
       }
     });
 
-    return solo.concat(Object.keys(bySeries).map((k) => bySeries[k]));
+    const items = solo.concat(Object.keys(bySeries).map((k) => bySeries[k]));
+
+    // 按系列排序值升序排列:数字越小越靠左(0 最左)
+    items.sort(
+      (a, b) =>
+        (a.seriesSort() || 0) - (b.seriesSort() || 0) || String(a.series() || '').localeCompare(String(b.series() || ''))
+    );
+
+    return items;
   }
 
   view() {

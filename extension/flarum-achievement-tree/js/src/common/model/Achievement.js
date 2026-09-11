@@ -11,13 +11,16 @@ export default class Achievement extends Model {
   isHidden = Model.attribute('isHidden');
   series = Model.attribute('series');
   seriesName = Model.attribute('seriesName');
+  seriesSort = Model.attribute('seriesSort');
   tier = Model.attribute('tier');
   awardedAt = Model.attribute('awardedAt', Model.transformDate);
+  isDisplayed = Model.attribute('isDisplayed');
+  proofImages = Model.attribute('proofImages');
   ruleType = Model.attribute('ruleType');
+  ruleConfig = Model.attribute('ruleConfig');
   createdAt = Model.attribute('createdAt', Model.transformDate);
   canEdit = Model.attribute('canEdit');
   canAward = Model.attribute('canAward');
-  isDisplayed = Model.attribute('isDisplayed');
 
   parent = Model.hasOne('parent');
   children = Model.hasMany('children');

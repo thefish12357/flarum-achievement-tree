@@ -32,7 +32,6 @@ class AchievementSerializer extends AbstractSerializer
 
         return [
             'name' => $achievement->name,
-            'slug' => $achievement->slug,
             'description' => $achievement->description,
             'icon' => $achievement->icon,
             'imageUrl' => $achievement->image_url,
@@ -40,9 +39,10 @@ class AchievementSerializer extends AbstractSerializer
             'position' => (int) $achievement->position,
             'isHidden' => (bool) $achievement->is_hidden,
             'series' => $achievement->series,
-            'seriesName' => $achievement->series_name,
+            'seriesSort' => (int) ($achievement->series_sort ?? 0),
             'tier' => (int) $achievement->tier,
             'ruleType' => $achievement->rule_type,
+            'ruleConfig' => $achievement->rule_config,
             'createdAt' => $this->formatDate($this->toDateTime($achievement->created_at)),
             'canEdit' => $this->actor->can('edit', $achievement),
             'canAward' => $this->actor->can('award', $achievement),

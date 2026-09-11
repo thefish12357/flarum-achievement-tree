@@ -23,7 +23,7 @@ export default class SeriesColumn extends Component {
     return m('.SeriesColumn', [
       m('.SeriesColumn-header', [
         // 未分组没有原始名,渲染时才翻译(trans 返回数组,作为 children 合法)
-        m('.SeriesColumn-name', group.name || trans('user_page.ungrouped')),
+        m('.SeriesColumn-name', { title: group.name || trans('user_page.ungrouped') }, group.name || trans('user_page.ungrouped')),
         m('button.SeriesColumn-toggle', { type: 'button', onclick: () => this.toggle() }, [
           // 加文字标签,避免用户不知道这按钮是干嘛的
           m('span.SeriesColumn-toggleLabel', this.expanded ? trans('user_page.collapse') : trans('user_page.expand')),

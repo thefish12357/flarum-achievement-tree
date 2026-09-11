@@ -11,7 +11,6 @@
 
 namespace Thefish12357\AchievementTree\Api\Controller;
 
-use Carbon\Carbon;
 use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\Http\RequestUtil;
 use Flarum\User\User;
@@ -19,6 +18,7 @@ use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
 use Thefish12357\AchievementTree\Achievement;
 use Thefish12357\AchievementTree\Api\Serializer\AchievementSerializer;
+use Thefish12357\AchievementTree\AutoUnlock\AchievementGranter;
 use Tobscure\JsonApi\Document;
 
 class AwardAchievementController extends AbstractCreateController
@@ -41,13 +41,7 @@ class AwardAchievementController extends AbstractCreateController
         /** @var User $user */
         $user = User::findOrFail($userId);
 
-        if (! $achievement->users()->where('users.id', $user->id)->exists()) {
-            $achievement->users()->attach($user->id, [
-                'awarded_at' => Carbon::now(),
-                'awarded_by_id' => $actor->id,
-                'is_displayed' => true,
-            ]);
-        }
+        AchievementGranter::grant($user, $achievement, $actor->id);
 
         return $achievement;
     }

@@ -7,7 +7,6 @@ thefish12357-achievement-tree:
     edit_title: Edit Achievement
 
     name: Name
-    slug: Slug
     description: Description
     icon: Icon
     image_url: Image URL
@@ -17,24 +16,28 @@ thefish12357-achievement-tree:
     upload_error: Upload failed, please retry
     parent: Parent
     no_parent: (No parent)
-    position: Position
     series: Series
     series_help: Achievements in the same series are grouped. In posts only the user's highest rank (highest tier number; 0 = lowest) is shown; others are hidden.
-    series_name: Series name
-    series_name_help: Display name for this series. Leave blank to show the series key. Changes apply to all achievements in the series.
     tier: Tier
     tier_help: Higher tier number = higher rank (0 is the lowest tier). In posts, only the top tier per series is shown.
-    points: Points
+    add_to_series: Add achievement to this series
+    ungrouped: Ungrouped
     confirm_save: Confirm save changes to "{name}"?
     confirm_award: Award "{name}" to user {id}?
     confirm_revoke: Revoke "{name}" from user {id}?
     crop_title: Crop image
-    crop_help: Drag the square to choose the area, then click Confirm to upload.
+    crop_help: Drag the square to move it, drag the bottom-right dot to resize (always square), then click Confirm to upload.
     crop_confirm: Confirm
     crop_cancel: Cancel
     crop_reupload: Re-crop
     crop_uploading: Uploading crop…
     crop_incomplete: Please complete or cancel the image crop before saving.
+    unlock_mode: Unlock mode
+    manual: Manual award
+    auto: Auto unlock
+    unlock_mode_help: With "Auto unlock" selected, the achievement is granted automatically when a user satisfies the rule below.
+    rule_type: Rule type
+    select_role: Select a role
     is_hidden: Hidden achievement
     hidden: Hidden
     actions: Actions
@@ -51,6 +54,7 @@ thefish12357-achievement-tree:
     award_user_id: User ID for award / revoke
     award_help: Enter the target user ID first, then click Award or Revoke on a row.
     award_user_required: Please enter a user ID first.
+    award_user_invalid: User ID must be a positive integer.
     confirm_delete: Delete this achievement? Users who earned it will lose it.
 
     applications_title: Achievement Applications
@@ -73,7 +77,9 @@ thefish12357-achievement-tree:
     empty: No applications.
 
   forum:
-    points: Points
+    series: Series
+    tier: Tier
+    awarded_at: Awarded at
     parent: Parent achievement
     close: Close
     cancel: Cancel
@@ -83,6 +89,7 @@ thefish12357-achievement-tree:
       achievement_application_approved_text: 'Your application for achievement "{name}" has been approved'
       achievement_application_rejected_text: 'Your application for achievement "{name}" has been rejected'
       rejection_reason: Rejection reason
+      achievement_unlocked_text: 'You unlocked the achievement "{name}"'
     user_page:
       nav: Achievements
       earned_summary: "Earned {count} achievements"
@@ -90,6 +97,7 @@ thefish12357-achievement-tree:
       loading: Loading achievements…
       load_error: Failed to load achievements.
       locked: Not yet earned
+      earned: Earned
       apply: Apply for this
       apply_title: Apply for {name}
       apply_hint: Tell us why you deserve "{name}". The reviewer will be notified.
@@ -103,11 +111,9 @@ thefish12357-achievement-tree:
       ungrouped: Ungrouped
       expand: Expand
       collapse: Collapse
-      apply_hint_image: You can upload an image as proof (provide at least a description or an image).
       proof_blur_hint: Please blur or cover sensitive information in the image before uploading.
       upload_proof: Upload proof image
       proof_uploading: Uploading…
       proof_upload_error: Image upload failed, please retry
       proof_remove: Remove
-      proof_images: Proof images
     # M7 用户资料页成就树 / M8 设置页证明材料

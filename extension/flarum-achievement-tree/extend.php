@@ -13,14 +13,29 @@ use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Extend;
 use Flarum\Foundation\Paths;
 use Flarum\Http\UrlGenerator;
+use Flarum\Discussion\Event\Started;
+use Flarum\Post\Event\Posted;
+use Flarum\Post\Event\PostWasLiked;
+use Flarum\User\Event\GroupsChanged;
+use Flarum\User\Event\LoggedIn;
+use Flarum\User\Event\Registered;
 use Flarum\User\User;
 use Thefish12357\AchievementTree\Access\AchievementPolicy;
 use Thefish12357\AchievementTree\Access\ApplicationPolicy;
 use Thefish12357\AchievementTree\Achievement;
 use Thefish12357\AchievementTree\AchievementApplication;
 use Thefish12357\AchievementTree\Api\Controller;
+use Thefish12357\AchievementTree\Api\Controller\ListRuleTypesController;
 use Thefish12357\AchievementTree\Api\Serializer\AchievementApplicationSerializer;
+use Thefish12357\AchievementTree\Api\Serializer\AchievementSerializer;
+use Thefish12357\AchievementTree\Listener\UnlockOnDiscussionStarted;
+use Thefish12357\AchievementTree\Listener\UnlockOnGroupsChanged;
+use Thefish12357\AchievementTree\Listener\UnlockOnLoggedIn;
+use Thefish12357\AchievementTree\Listener\UnlockOnPostLiked;
+use Thefish12357\AchievementTree\Listener\UnlockOnPosted;
+use Thefish12357\AchievementTree\Listener\UnlockOnRegistered;
 use Thefish12357\AchievementTree\Notification\ApplicationReviewedBlueprint;
+use Thefish12357\AchievementTree\Notification\AchievementUnlockedBlueprint;
 
 return [
     (new Extend\Frontend('forum'))
@@ -63,7 +78,8 @@ return [
         ->get('/achievement-applications', 'achievement-applications.index', Controller\ListApplicationsController::class)
         ->post('/achievement-applications', 'achievement-applications.create', Controller\CreateApplicationController::class)
         ->post('/achievement-proof-images', 'achievement-applications.upload-proof', Controller\UploadApplicationProofImageController::class)
-        ->patch('/achievement-applications/{id}', 'achievement-applications.review', Controller\ReviewApplicationController::class),
+        ->patch('/achievement-applications/{id}', 'achievement-applications.review', Controller\ReviewApplicationController::class)
+        ->get('/achievement-rule-types', 'achievement-rule-types.index', ListRuleTypesController::class),
 
     // 用户与成就多对多
     (new Extend\Model(User::class))
@@ -119,13 +135,12 @@ return [
                     'type' => 'achievements',
                     'attributes' => [
                         'name' => $achievement->name,
-                        'slug' => $achievement->slug,
                         'description' => $achievement->description,
                         'icon' => $achievement->icon,
                         'imageUrl' => $achievement->image_url,
                         'parentId' => $achievement->parent_id,
                         'series' => $achievement->series,
-                        'seriesName' => $achievement->series_name,
+                        'seriesSort' => (int) ($achievement->series_sort ?? 0),
                         'tier' => (int) $achievement->tier,
                         'position' => $achievement->position,
                         'isHidden' => (bool) $achievement->is_hidden,
@@ -141,7 +156,17 @@ return [
         ->modelPolicy(Achievement::class, AchievementPolicy::class)
         ->modelPolicy(AchievementApplication::class, ApplicationPolicy::class),
 
+    // 自动解锁:监听角色变更/注册/发帖/发起主题/被点赞/登录,自动授予满足规则的成就
+    (new Extend\Event())
+        ->listen(GroupsChanged::class, UnlockOnGroupsChanged::class)
+        ->listen(Registered::class, UnlockOnRegistered::class)
+        ->listen(Posted::class, UnlockOnPosted::class)
+        ->listen(Started::class, UnlockOnDiscussionStarted::class)
+        ->listen(PostWasLiked::class, UnlockOnPostLiked::class)
+        ->listen(LoggedIn::class, UnlockOnLoggedIn::class),
+
     // 申请审核结果通知(通过/驳回)→ 申请人通知中心
     (new Extend\Notification())
-        ->type(ApplicationReviewedBlueprint::class, AchievementApplicationSerializer::class, ['alert']),
+        ->type(ApplicationReviewedBlueprint::class, AchievementApplicationSerializer::class, ['alert'])
+        ->type(AchievementUnlockedBlueprint::class, AchievementSerializer::class, ['alert']),
 ];

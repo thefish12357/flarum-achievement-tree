@@ -15,9 +15,9 @@
   cursor: pointer;
 
   &-icon {
-    width: 18px;
-    height: 18px;
-    font-size: 15px;
+    width: 28px;
+    height: 28px;
+    font-size: 24px;
     color: #8b5cf6;
     vertical-align: middle;
     object-fit: contain;
@@ -55,6 +55,8 @@
     p {
       margin: 0;
       color: @muted-color;
+      line-height: 1.5;
+      font-size: 13px;
     }
   }
 
@@ -101,13 +103,17 @@
 
   &-header {
     display: flex;
+    flex-wrap: nowrap; // 防止长名字把按钮挤到下一行
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
-    padding: 2px;
+    padding: 2px 2px 8px;
+    border-bottom: 1px solid @control-color; // 系列之间用细分隔线区分
   }
 
   &-name {
+    flex: 1 1 auto;
+    min-width: 0; // 配合 flex 才能实现省略
     font-weight: 700;
     font-size: 14px;
     color: @heading-color;
@@ -116,7 +122,31 @@
     text-overflow: ellipsis;
   }
 
+  &-badge {
+    display: inline-block;
+    margin: 4px 0 6px;
+    font-size: 11px;
+    line-height: 1.4;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .is-earned &-badge {
+    background: #e6f4ea;
+    color: #1e7e34;
+    border: 1px solid #b7dfc2;
+  }
+
+  .is-locked &-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
   &-toggle {
+    flex-shrink: 0; // 按钮不被压缩
+    white-space: nowrap;
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -127,6 +157,18 @@
     cursor: pointer;
     font-size: 12px;
     color: @muted-color;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover {
+      background: @control-bg;
+      border-color: #8b5cf6;
+      color: #6d28d9;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #8b5cf6;
+      outline-offset: 1px;
+    }
 
     .icon {
       font-size: 11px;
@@ -158,6 +200,7 @@
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     cursor: pointer;
     box-sizing: border-box;
+    overflow: hidden; // 让角标/图片不溢出圆角
     transition: transform 0.15s, box-shadow 0.15s;
     background: #fff;
 
@@ -252,9 +295,9 @@
     border-color: #8b5cf6;
   }
 
-  // 未获得:黑色卡片 + 图片灰度
+  // 未获得:柔和深底(不再是纯黑,避免像报错)+ 图片灰度
   &-card.is-locked {
-    background: #111827;
+    background: #1f2937;
     border-color: #374151;
 
     .AchievementTreeNode-name {

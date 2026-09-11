@@ -59,6 +59,7 @@ export default class AchievementTreeNode extends Component {
         m('.AchievementTreeNode-media', media),
         m('.AchievementTreeNode-body', [
           m('.AchievementTreeNode-name', achievement.name()),
+          m('.AchievementTreeNode-badge', earned ? trans('user_page.earned') : trans('user_page.locked')),
           m('.AchievementTreeNode-desc', achievement.description() || ''),
         ]),
         m('.AchievementTreeNode-action', action),

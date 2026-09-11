@@ -6,7 +6,7 @@ import withAttr from 'flarum/common/utils/withAttr';
 
 const apiUrl = () => (app.forum && app.forum.attribute('apiUrl')) || '/api';
 
-const trans = (key) => app.translator.trans(`thefish12357-achievement-tree.admin.${key}`);
+const trans = (key, params = {}) => app.translator.trans(`thefish12357-achievement-tree.admin.${key}`, params);
 
 export default class AchievementManager extends Component {
   oninit(vnode) {
@@ -21,6 +21,8 @@ export default class AchievementManager extends Component {
     this.uploadError = '';
     this.collapsed = {};
     this.form = this.blankForm();
+    this.ruleTypes = [];
+    this.groups = [];
 
     // 图片裁剪器状态(上传后用正方形框确定展示区域,见 0.4 决策与坑27)
     this.crop = null; // { src, x, y, size } 百分比坐标
@@ -30,23 +32,28 @@ export default class AchievementManager extends Component {
     this.cropDrag = null;
     this._cropMove = this.onCropMouseMove.bind(this);
     this._cropUp = this.onCropMouseUp.bind(this);
+    this.cropResize = null; // 裁剪框缩放拖拽状态
+    this._cropResizeMove = this.onCropResizeMove.bind(this);
+    this._cropResizeUp = this.onCropResizeUp.bind(this);
     this._cropInitialized = false; // 首次拿到图片时按长宽比居中方框;拖动后保持用户位置
 
     this.load();
+    this.loadMeta();
   }
 
   blankForm() {
     return {
       name: '',
-      slug: '',
       description: '',
       icon: 'fas fa-medal',
       imageUrl: '',
       parentId: '',
       series: '',
-      seriesName: '',
+      seriesSort: 0,
       tier: 0,
       isHidden: false,
+      ruleType: '',
+      ruleConfig: {},
     };
   }
 
@@ -90,15 +97,16 @@ export default class AchievementManager extends Component {
     this.editingId = achievement.id();
     this.form = {
       name: achievement.name() || '',
-      slug: achievement.slug() || '',
       description: achievement.description() || '',
       icon: achievement.icon() || 'fas fa-medal',
       imageUrl: achievement.imageUrl() || '',
       parentId: achievement.parentId() || '',
       series: achievement.series() || '',
-      seriesName: achievement.seriesName() || '',
+      seriesSort: achievement.seriesSort() || 0,
       tier: achievement.tier() || 0,
       isHidden: !!achievement.isHidden(),
+      ruleType: achievement.ruleType() || '',
+      ruleConfig: achievement.ruleConfig() ? JSON.parse(JSON.stringify(achievement.ruleConfig())) : {},
     };
     this.uploadError = '';
     if (this.form.series) this.collapsed[this.form.series] = false;
@@ -138,7 +146,8 @@ export default class AchievementManager extends Component {
       });
 
       // 上传原图后不直接写 imageUrl,而是打开裁剪器,让管理员用正方形框确定最终展示区域
-      this.crop = { src: res.url, x: 10, y: 10, size: 80 };
+      // 默认 size=100:正方形图片直接全选,非正方形则默认选中最大居中正方形
+      this.crop = { src: res.url, x: 0, y: 0, size: 100 };
       this.cropImgEl = null;
       this._cropInitialized = false;
       this.cropError = '';
@@ -171,21 +180,32 @@ export default class AchievementManager extends Component {
       return;
     }
 
+    // 自定义条件组合:至少要有一个条件
+    if (this.form.ruleType === 'conditions') {
+      const conds = (this.form.ruleConfig && this.form.ruleConfig.conditions) || [];
+      if (!conds.length) {
+        this.notice = '自动授予需要至少添加一个条件';
+        m.redraw();
+        return;
+      }
+    }
+
     if (!confirm(trans('confirm_save', { name: this.form.name }))) {
       return;
     }
 
     const data = {
       name: this.form.name,
-      slug: this.form.slug || null,
       description: this.form.description || null,
       icon: this.form.icon || null,
       imageUrl: this.form.imageUrl || null,
       parentId: this.form.parentId === '' ? null : Number(this.form.parentId),
       series: this.form.series || null,
-      seriesName: this.form.seriesName || null,
+      seriesSort: Number(this.form.seriesSort) || 0,
       tier: Number(this.form.tier) || 0,
       isHidden: !!this.form.isHidden,
+      ruleType: this.form.ruleType ? this.form.ruleType : null,
+      ruleConfig: this.form.ruleType ? this.form.ruleConfig : {},
     };
 
     try {
@@ -204,6 +224,187 @@ export default class AchievementManager extends Component {
     }
   }
 
+  async loadMeta() {
+    try {
+      const res = await app.request({ url: `${apiUrl()}/achievement-rule-types` });
+      // Flarum API 返回 JSON API 文档,data 数组元素含 attributes;兼容直接返回数组的情况
+      const list = (res && Array.isArray(res.data) ? res.data : res) || [];
+      this.ruleTypes = list.map((r) => r.attributes || r);
+    } catch (e) {
+      this.ruleTypes = [];
+    }
+    try {
+      this.groups = (await app.store.find('groups')) || [];
+    } catch (e) {
+      this.groups = [];
+    }
+    m.redraw();
+  }
+
+  renderRuleConfig() {
+    const rule = this.ruleTypes.find((r) => r.ruleType === this.form.ruleType);
+
+    if (!rule) {
+      return null;
+    }
+
+    return m('.Form-group.AchievementRuleConfig', [
+      m('label', trans('rule_type')),
+      m(
+        'select.FormControl',
+        {
+          value: this.form.ruleType,
+          onchange: withAttr('value', (v) => {
+            this.form.ruleType = v;
+            this.form.ruleConfig = v === 'conditions' ? { conditions: [] } : {};
+          }),
+        },
+        this.ruleTypes.map((r) => m('option', { value: r.ruleType }, r.label))
+      ),
+      this.form.ruleType === 'conditions' ? this.renderConditionsEditor() : rule.fields.map((f) => this.renderRuleField(f)),
+    ]);
+  }
+
+  /**
+   * 自定义条件组合编辑器:管理员手动添加多个授予条件,全部满足才自动授予。
+   */
+  renderConditionsEditor() {
+    const conds = (this.form.ruleConfig && this.form.ruleConfig.conditions) || [];
+    const types = this.ruleTypes.filter((r) => r.ruleType !== 'conditions');
+
+    const update = (conditions) => {
+      this.form.ruleConfig = Object.assign({}, this.form.ruleConfig, { conditions });
+    };
+
+    return [
+      m('small.helpText', '满足以下全部条件后自动授予:'),
+      conds.length
+        ? conds.map((c, i) => {
+            const def = types.find((t) => t.ruleType === c.type);
+            return m('.AchievementRuleCondition', [
+              m(
+                'select.FormControl',
+                {
+                  value: c.type,
+                  onchange: withAttr('value', (v) => {
+                    const next = conds.slice();
+                    next[i] = { type: v };
+                    update(next);
+                  }),
+                },
+                types.map((t) => m('option', { value: t.ruleType }, t.label))
+              ),
+              ...((def ? def.fields : []).map((f) =>
+                this.renderConditionField(f, c, (val) => {
+                  const next = conds.slice();
+                  next[i] = Object.assign({}, c, { [f.key]: val });
+                  update(next);
+                })
+              )),
+              m(
+                Button,
+                { className: 'Button Button--link', type: 'button', onclick: () => update(conds.filter((_, j) => j !== i)) },
+                '删除'
+              ),
+            ]);
+          })
+        : m('small.helpText', '尚未添加条件,请点击下方按钮添加。'),
+      m(
+        Button,
+        {
+          className: 'Button',
+          type: 'button',
+          disabled: !types.length,
+          onclick: () => update(conds.concat([{ type: types.length ? types[0].ruleType : '' }])),
+        },
+        '+ 添加条件'
+      ),
+    ];
+  }
+
+  renderConditionField(f, cond, set) {
+    if (f.type === 'role') {
+      return m(
+        'select.FormControl',
+        {
+          value: cond.role_id ? String(cond.role_id) : '',
+          onchange: withAttr('value', (v) => set(v ? Number(v) : null)),
+        },
+        [
+          m('option', { value: '' }, trans('select_role')),
+          ...this.groups.map((g) =>
+            m('option', { value: String(g.id()) }, g.nameSingular() || g.namePlural() || `#${g.id()}`)
+          ),
+        ]
+      );
+    }
+
+    const isNumber = f.type === 'number';
+
+    return m('input.FormControl', {
+      type: isNumber ? 'number' : 'text',
+      min: '0',
+      step: '1',
+      placeholder: f.label,
+      value: cond[f.key] != null ? String(cond[f.key]) : '',
+      oninput: withAttr('value', (v) => set(isNumber ? (v === '' ? null : Number(v)) : v)),
+    });
+  }
+
+  renderRuleField(f) {
+    if (f.type === 'role') {
+      return m('.Form-group', [
+        m('label', f.label),
+        m(
+          'select.FormControl',
+          {
+            value: this.form.ruleConfig.role_id ? String(this.form.ruleConfig.role_id) : '',
+            onchange: withAttr('value', (v) => {
+              this.form.ruleConfig = Object.assign({}, this.form.ruleConfig, {
+                role_id: v ? Number(v) : null,
+              });
+            }),
+          },
+          [
+            m('option', { value: '' }, trans('select_role')),
+            ...this.groups.map((g) =>
+              m('option', { value: String(g.id()) }, g.nameSingular() || g.namePlural() || `#${g.id()}`)
+            ),
+          ]
+        ),
+      ]);
+    }
+
+    // 数字输入(发帖数/主题帖数/天数/点赞数等)
+    if (f.type === 'number') {
+      return m('.Form-group', [
+        m('label', f.label),
+        m('input.FormControl', {
+          type: 'number',
+          min: '0',
+          step: '1',
+          value: this.form.ruleConfig[f.key] != null ? String(this.form.ruleConfig[f.key]) : '',
+          oninput: withAttr('value', (v) => {
+            const n = v === '' ? null : Number(v);
+            this.form.ruleConfig = Object.assign({}, this.form.ruleConfig, { [f.key]: n });
+          }),
+        }),
+      ]);
+    }
+
+    // 通用文本输入(预留给未来的非角色类规则)
+    return m('.Form-group', [
+      m('label', f.label),
+      m('input.FormControl', {
+        type: 'text',
+        value: this.form.ruleConfig[f.key] != null ? String(this.form.ruleConfig[f.key]) : '',
+        oninput: withAttr('value', (v) => {
+          this.form.ruleConfig = Object.assign({}, this.form.ruleConfig, { [f.key]: v });
+        }),
+      }),
+    ]);
+  }
+
   async remove(achievement) {
     if (!confirm(trans('confirm_delete'))) {
       return;
@@ -213,9 +414,19 @@ export default class AchievementManager extends Component {
     await this.load();
   }
 
+  _validAwardUserId() {
+    const id = Number(this.awardUserId);
+    return Number.isInteger(id) && id > 0;
+  }
+
   async award(achievement) {
     if (!this.awardUserId) {
       alert(trans('award_user_required'));
+      return;
+    }
+
+    if (!this._validAwardUserId()) {
+      alert(trans('award_user_invalid'));
       return;
     }
 
@@ -245,6 +456,11 @@ export default class AchievementManager extends Component {
       return;
     }
 
+    if (!this._validAwardUserId()) {
+      alert(trans('award_user_invalid'));
+      return;
+    }
+
     if (!confirm(trans('confirm_revoke', { name: achievement.name(), id: this.awardUserId }))) {
       return;
     }
@@ -267,7 +483,7 @@ export default class AchievementManager extends Component {
 
   startRecrop() {
     if (!this.form.imageUrl) return;
-    this.crop = { src: this.form.imageUrl, x: 10, y: 10, size: 80 };
+    this.crop = { src: this.form.imageUrl, x: 0, y: 0, size: 100 };
     this.cropImgEl = null;
     this._cropInitialized = false;
     this.cropError = '';
@@ -318,6 +534,47 @@ export default class AchievementManager extends Component {
     this.cropDrag = null;
     window.removeEventListener('mousemove', this._cropMove);
     window.removeEventListener('mouseup', this._cropUp);
+  }
+
+  beginCropResize(e) {
+    e.stopPropagation();
+    this.cropResize = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startSize: this.crop.size,
+    };
+    window.addEventListener('mousemove', this._cropResizeMove);
+    window.addEventListener('mouseup', this._cropResizeUp);
+  }
+
+  onCropResizeMove(e) {
+    if (!this.cropResize || !this.cropImgEl) return;
+    const rect = this.cropImgEl.getBoundingClientRect();
+    const minSide = Math.min(rect.width, rect.height);
+    if (!minSide) return;
+
+    const dx = e.clientX - this.cropResize.startX;
+    const dy = e.clientY - this.cropResize.startY;
+    // 把鼠标沿对角线方向的位移换算成正方形边长变化
+    const deltaPx = (dx + dy) / Math.SQRT2;
+    const deltaSize = (deltaPx / minSide) * 100;
+    const newSize = this.cropResize.startSize + deltaSize;
+
+    // 限制最小尺寸,并保证放大后不会超出图片边界
+    const minSize = 10;
+    const maxSize = Math.min(
+      100,
+      ((100 - this.crop.x) * rect.width) / minSide,
+      ((100 - this.crop.y) * rect.height) / minSide
+    );
+    this.crop.size = Math.max(minSize, Math.min(maxSize, newSize));
+    m.redraw();
+  }
+
+  onCropResizeUp() {
+    this.cropResize = null;
+    window.removeEventListener('mousemove', this._cropResizeMove);
+    window.removeEventListener('mouseup', this._cropResizeUp);
   }
 
   async confirmCrop() {
@@ -397,7 +654,12 @@ export default class AchievementManager extends Component {
     }
 
     const parentOptions = [{ value: '', label: trans('no_parent') }].concat(
-      this.achievements.filter((a) => !this.editingId || a.id() !== this.editingId).map((a) => ({ value: a.id(), label: `#${a.id()} ${a.name()}` }))
+      this.achievements
+        .filter((a) => !this.editingId || a.id() !== this.editingId)
+        .map((a) => {
+          const series = a.series();
+          return { value: a.id(), label: series ? `${a.name()}（${series}）` : a.name() };
+        })
     );
 
     const groups = this.grouped();
@@ -409,7 +671,7 @@ export default class AchievementManager extends Component {
         m('td', a.imageUrl() ? m('img.AchievementIcon', { src: a.imageUrl(), alt: a.name() }) : icon(a.icon() || 'fas fa-medal')),
         m('td', [a.name(), a.isHidden() ? m('span.AchievementBadge-hidden', ` (${trans('hidden')})`) : null]),
         m('td', String(a.tier() || 0)),
-        m('td', parent ? `#${parent.id()} ${parent.name()}` : '-'),
+        m('td', parent ? parent.name() : '-'),
         m('td', a.isHidden() ? trans('yes') : trans('no')),
         m('td.AchievementManager-actions', [
           m(Button, { className: 'Button Button--link', onclick: () => this.startEdit(a) }, trans('edit')),
@@ -480,6 +742,7 @@ export default class AchievementManager extends Component {
         m('label', trans('award_user_id')),
         m('input.FormControl', {
           type: 'number',
+          min: 0,
           value: this.awardUserId,
           oninput: withAttr('value', (v) => (this.awardUserId = v)),
           placeholder: '2',
@@ -494,10 +757,6 @@ export default class AchievementManager extends Component {
         m('.Form-group', [
           m('label', trans('name')),
           m('input.FormControl', { type: 'text', value: this.form.name, oninput: withAttr('value', (v) => (this.form.name = v)), required: true }),
-        ]),
-        m('.Form-group', [
-          m('label', trans('slug')),
-          m('input.FormControl', { type: 'text', value: this.form.slug, oninput: withAttr('value', (v) => (this.form.slug = v)) }),
         ]),
         m('.Form-group', [
           m('label', trans('description')),
@@ -579,32 +838,57 @@ export default class AchievementManager extends Component {
                     },
                   }),
                   this.cropImgEl
-                    ? m('.AchievementImageCropper-box', {
-                        style: (() => {
-                          const img = this.cropImgEl;
-                          const w = img.clientWidth;
-                          const h = img.clientHeight;
-                          const side = (this.crop.size / 100) * Math.min(w, h);
-                          const x = (this.crop.x / 100) * w;
-                          const y = (this.crop.y / 100) * h;
-                          return {
-                            position: 'absolute',
-                            left: x + 'px',
-                            top: y + 'px',
-                            width: side + 'px',
-                            height: side + 'px',
-                            border: '2px solid #fff',
-                            // 用超大的 box-shadow 在方框外侧压暗,实现"除选定区外变暗"
-                            boxShadow: '0 0 0 9999px rgba(0,0,0,0.5)',
-                            cursor: 'move',
-                            boxSizing: 'border-box',
-                          };
-                        })(),
-                        onmousedown: (e) => {
-                          e.preventDefault();
-                          this.beginCropDrag(e);
+                    ? m(
+                        '.AchievementImageCropper-box',
+                        {
+                          style: (() => {
+                            const img = this.cropImgEl;
+                            const w = img.clientWidth;
+                            const h = img.clientHeight;
+                            const side = (this.crop.size / 100) * Math.min(w, h);
+                            const x = (this.crop.x / 100) * w;
+                            const y = (this.crop.y / 100) * h;
+                            return {
+                              position: 'absolute',
+                              left: x + 'px',
+                              top: y + 'px',
+                              width: side + 'px',
+                              height: side + 'px',
+                              border: '2px solid #fff',
+                              // 用超大的 box-shadow 在方框外侧压暗,实现"除选定区外变暗"
+                              boxShadow: '0 0 0 9999px rgba(0,0,0,0.5)',
+                              cursor: 'move',
+                              boxSizing: 'border-box',
+                            };
+                          })(),
+                          onmousedown: (e) => {
+                            e.preventDefault();
+                            this.beginCropDrag(e);
+                          },
                         },
-                      })
+                        [
+                          // 右下角缩放把手,拖拽时只改 size,始终保持正方形
+                          m('.AchievementImageCropper-handle', {
+                            style: {
+                              position: 'absolute',
+                              right: '-6px',
+                              bottom: '-6px',
+                              width: '12px',
+                              height: '12px',
+                              background: '#fff',
+                              border: '2px solid #000',
+                              borderRadius: '50%',
+                              cursor: 'nwse-resize',
+                              zIndex: 1,
+                            },
+                            onmousedown: (e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              this.beginCropResize(e);
+                            },
+                          }),
+                        ]
+                      )
                     : null,
                 ]
               ),
@@ -629,15 +913,17 @@ export default class AchievementManager extends Component {
           }),
           m('small.helpText', trans('series_help')),
         ]),
+        // 系列排序:始终显示,填写系列后对整系列生效
         m('.Form-group', [
-          m('label', trans('series_name')),
+          m('label', '系列排序'),
           m('input.FormControl', {
-            type: 'text',
-            value: this.form.seriesName,
-            oninput: withAttr('value', (v) => (this.form.seriesName = v)),
-            placeholder: 'A系列',
+            type: 'number',
+            min: '0',
+            step: '1',
+            value: String(this.form.seriesSort != null ? this.form.seriesSort : 0),
+            oninput: withAttr('value', (v) => (this.form.seriesSort = v === '' ? 0 : Number(v))),
           }),
-          m('small.helpText', trans('series_name_help')),
+          m('small.helpText', '数字越小越靠前,0 排在最左边;同一系列共用一个排序值,保存后对整个系列生效(需配合"系列"字段使用)。'),
         ]),
         m('.Form-group', [
           m('label', trans('tier')),
@@ -659,6 +945,34 @@ export default class AchievementManager extends Component {
             trans('is_hidden'),
           ]),
         ]),
+
+        // ===== 自动解锁规则 =====
+        m('.Form-group', [
+          m('label', trans('unlock_mode')),
+          m(
+            'select.FormControl',
+            {
+              value: this.form.ruleType ? 'auto' : 'manual',
+              onchange: withAttr('value', (v) => {
+                if (v === 'manual') {
+                  this.form.ruleType = '';
+                  this.form.ruleConfig = {};
+                } else if (!this.form.ruleType && this.ruleTypes.length) {
+                  this.form.ruleType = this.ruleTypes[0].ruleType;
+                  this.form.ruleConfig = {};
+                }
+              }),
+            },
+            [
+              m('option', { value: 'manual' }, trans('manual')),
+              m('option', { value: 'auto' }, trans('auto')),
+            ]
+          ),
+          m('small.helpText', trans('unlock_mode_help')),
+        ]),
+
+        this.form.ruleType ? this.renderRuleConfig() : null,
+
         m(Button, { type: 'submit', className: 'Button Button--primary' }, trans('save')),
         this.editingId ? m(Button, { className: 'Button', onclick: () => this.cancelEdit() }, trans('cancel')) : null,
       ]),

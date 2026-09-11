@@ -15,7 +15,11 @@ export default class AchievementBadge extends Component {
       'button.AchievementBadge',
       {
         type: 'button',
-        onclick: () => app.modal.show(AchievementModal, { achievement }),
+        onclick: () =>
+        app.modal.show(AchievementModal, {
+          achievement,
+          proofImages: this.attrs.achievement.proofImages() || [],
+        }),
       },
       m(Tooltip, { text: achievement.name() }, content)
     );

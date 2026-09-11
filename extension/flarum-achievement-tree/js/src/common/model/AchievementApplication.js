@@ -8,6 +8,7 @@ export default class AchievementApplication extends Model {
   proofImages = Model.attribute('proofImages');
   status = Model.attribute('status');
   reviewComment = Model.attribute('reviewComment');
+  rejectionReason = Model.attribute('rejectionReason');
   reviewedAt = Model.attribute('reviewedAt', Model.transformDate);
   createdAt = Model.attribute('createdAt', Model.transformDate);
   canReview = Model.attribute('canReview');

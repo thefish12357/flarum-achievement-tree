@@ -34,7 +34,6 @@ class CreateAchievementController extends AbstractCreateController
 
         $achievement = new Achievement();
         $achievement->name = Arr::get($data, 'name');
-        $achievement->slug = Arr::get($data, 'slug');
         $achievement->description = Arr::get($data, 'description');
         $achievement->icon = Arr::get($data, 'icon');
         $achievement->image_url = Arr::get($data, 'imageUrl');
@@ -43,26 +42,16 @@ class CreateAchievementController extends AbstractCreateController
         $achievement->is_hidden = (bool) Arr::get($data, 'isHidden', false);
         $achievement->points = (int) Arr::get($data, 'points', 0);
         $achievement->series = Arr::get($data, 'series');
+        $achievement->series_sort = (int) Arr::get($data, 'seriesSort', 0);
         $achievement->tier = (int) Arr::get($data, 'tier', 0);
         $achievement->rule_type = Arr::get($data, 'ruleType');
-
-        $series = Arr::get($data, 'series');
-        $seriesName = Arr::get($data, 'seriesName');
-
-        if ($series !== null && $series !== '') {
-            if ($seriesName !== null && $seriesName !== '') {
-                $achievement->series_name = $seriesName;
-            } else {
-                // 新建时未填系列名,则继承该系列已有的名称
-                $achievement->series_name = Achievement::existingSeriesName($series);
-            }
-        }
+        $achievement->rule_config = Arr::get($data, 'ruleConfig');
 
         $achievement->save();
 
-        // 若显式修改了系列名称,则同步到同系列其它成就
-        if ($series !== null && $series !== '' && $seriesName !== null && $seriesName !== '') {
-            Achievement::syncSeriesName($series, $seriesName);
+        // 系列排序对整个系列生效:同系列成就统一排序值
+        if ($achievement->series) {
+            Achievement::syncSeriesSort($achievement->series, (int) $achievement->series_sort);
         }
 
         return $achievement;

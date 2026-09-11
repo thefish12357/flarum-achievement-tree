@@ -27,6 +27,7 @@ use Flarum\User\User;
  * @property int $points
  * @property string|null $series
  * @property string|null $series_name
+ * @property int $series_sort
  * @property int $tier
  * @property string|null $rule_type
  * @property mixed $rule_config
@@ -47,8 +48,10 @@ class Achievement extends AbstractModel
         'points' => 'int',
         'series' => 'string',
         'series_name' => 'string',
+        'series_sort' => 'int',
         'tier' => 'int',
         'is_hidden' => 'bool',
+        'rule_config' => 'array',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -65,6 +68,7 @@ class Achievement extends AbstractModel
         'points',
         'series',
         'series_name',
+        'series_sort',
         'tier',
         'rule_type',
         'rule_config',
@@ -90,6 +94,15 @@ class Achievement extends AbstractModel
             ->first();
 
         return $row ? $row->series_name : null;
+    }
+
+    /**
+     * 把同一 series 下所有成就的排序值统一为 $sort(实现"修改系列排序")。
+     * 数字越小越靠前(0 在最左/最前)。
+     */
+    public static function syncSeriesSort(string $series, int $sort): void
+    {
+        static::where('series', $series)->update(['series_sort' => $sort]);
     }
 
     public function parent()

@@ -116,6 +116,24 @@
   }
 }
 
+// 自动授予:自定义条件组合编辑器(每行 = 条件类型 + 配置 + 删除)
+.AchievementRuleCondition {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  .FormControl {
+    flex: 1;
+    min-width: 0;
+  }
+
+  select.FormControl {
+    flex: 0 0 auto;
+    width: auto;
+  }
+}
+
 // 裁剪器:舞台上叠一个可拖动的正方形,周围用 box-shadow 压暗
 .AchievementImageCropper {
   border: 1px solid @control-bg;

@@ -7,6 +7,7 @@ import AchievementApplication from '../common/model/AchievementApplication';
 import AchievementBadgeList from './components/AchievementBadgeList';
 import AchievementsUserPage from './components/AchievementsUserPage';
 import ApplicationReviewedNotification from './components/ApplicationReviewedNotification';
+import AchievementUnlockedNotification from './components/AchievementUnlockedNotification';
 
 app.initializers.add('thefish12357-achievement-tree', () => {
   app.store.models.achievements = Achievement;
@@ -14,6 +15,8 @@ app.initializers.add('thefish12357-achievement-tree', () => {
 
   // 通知中心:申请审核结果(通过/驳回)
   app.notificationComponents.achievementApplicationReviewed = ApplicationReviewedNotification;
+  // 通知中心:成就自动解锁
+  app.notificationComponents.achievementUnlocked = AchievementUnlockedNotification;
 
   // M6: 帖子下方成就图标行
   extend(CommentPost.prototype, 'footerItems', function (items) {

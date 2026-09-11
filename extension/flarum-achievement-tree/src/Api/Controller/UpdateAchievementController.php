@@ -30,7 +30,6 @@ class UpdateAchievementController extends AbstractShowController
      */
     private const FIELD_MAP = [
         'name' => 'name',
-        'slug' => 'slug',
         'description' => 'description',
         'icon' => 'icon',
         'imageUrl' => 'image_url',
@@ -39,9 +38,10 @@ class UpdateAchievementController extends AbstractShowController
         'isHidden' => 'is_hidden',
         'points' => 'points',
         'series' => 'series',
-        'seriesName' => 'series_name',
+        'seriesSort' => 'series_sort',
         'tier' => 'tier',
         'ruleType' => 'rule_type',
+        'ruleConfig' => 'rule_config',
     ];
 
     protected function data(ServerRequestInterface $request, Document $document)
@@ -64,10 +64,9 @@ class UpdateAchievementController extends AbstractShowController
 
         $achievement->save();
 
-        // 修改系列名称:把改动同步到同一 series 下的其它成就,保证一个系列只有一个名字
-        $series = $achievement->series;
-        if ($series !== null && $series !== '' && Arr::has($data, 'seriesName')) {
-            Achievement::syncSeriesName($series, $achievement->series_name);
+        // 系列排序对整个系列生效:同系列成就统一排序值
+        if ($achievement->series) {
+            Achievement::syncSeriesSort($achievement->series, (int) $achievement->series_sort);
         }
 
         return $achievement;

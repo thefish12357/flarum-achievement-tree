@@ -5,7 +5,6 @@ thefish12357-achievement-tree:
     edit_title: 编辑成就
 
     name: 名称
-    slug: 标识
     description: 描述
     icon: 图标
     image_url: 图片地址
@@ -15,11 +14,8 @@ thefish12357-achievement-tree:
     upload_error: 上传失败,请重试
     parent: 上级成就
     no_parent: (无上级)
-    position: 排序
     series: 系列
     series_help: 同一系列的成就会分组展示;帖子内只显示该用户已获得的最高层级(tier 数字最大的,0 为最低),其余隐藏。
-    series_name: 系列名称
-    series_name_help: 该系列在页面上显示的名称,留空则显示系列标识。修改后会同步应用到同系列的所有成就。
     tier: 层级
     tier_help: 数字越大层级越高(0 为最低层级);同系列在帖子内只显示最高层级。
     add_to_series: 在此系列添加成就
@@ -40,17 +36,25 @@ thefish12357-achievement-tree:
     award_user_id: 授予 / 撤销的目标用户 ID
     award_help: 先填写用户 ID,再点击某一行的「授予」或「撤销」。
     award_user_required: 请先填写用户 ID。
+    award_user_invalid: 用户 ID 必须是正整数。
     confirm_delete: 确定删除该成就?已获得的用户将失去该成就。
     confirm_save: 确定保存对「{name}」的修改?
     confirm_award: 确定将「{name}」授予用户 {id}?
     confirm_revoke: 确定撤销用户 {id} 的「{name}」?
     crop_title: 裁剪图片
-    crop_help: 拖动方框选择要保留的正方形区域,然后点击「确定」上传。
+    crop_help: 拖动方框选择位置,拖拽右下角圆点调整大小(始终保持正方形),然后点击「确定」上传。
     crop_confirm: 确定
     crop_cancel: 取消
     crop_reupload: 重新裁剪
     crop_uploading: 裁剪上传中…
     crop_incomplete: 请先完成或取消图片裁剪,再保存。
+
+    unlock_mode: 解锁方式
+    manual: 手动授予
+    auto: 自动解锁
+    unlock_mode_help: 选择「自动解锁」后,当用户满足下方规则时系统会自动授予该成就。
+    rule_type: 规则类型
+    select_role: 请选择角色
 
     applications_title: 成就申请审核
     filter: 状态
@@ -84,6 +88,7 @@ thefish12357-achievement-tree:
       achievement_application_approved_text: 你的成就「{name}」申请已通过
       achievement_application_rejected_text: 你的成就「{name}」申请被驳回
       rejection_reason: 驳回理由
+      achievement_unlocked_text: 你解锁了成就「{name}」
     user_page:
       nav: 成就
       earned_summary: 已获得 {count} 个成就
@@ -91,6 +96,7 @@ thefish12357-achievement-tree:
       loading: 加载中…
       load_error: 成就加载失败。
       locked: 尚未获得
+      earned: 已获得
       apply: 申请该成就
       apply_title: 申请「{name}」
       apply_hint: 说明你获得「{name}」的理由,审核者会收到通知。
@@ -104,10 +110,8 @@ thefish12357-achievement-tree:
       ungrouped: 未分组
       expand: 展开
       collapse: 收起
-      apply_hint_image: 可上传图片作为证明材料(说明与图片至少填一项)。
       proof_blur_hint: 请自行对上传的图片打马赛克或遮挡敏感信息后再上传。
       upload_proof: 上传证明材料图片
       proof_uploading: 上传中…
       proof_upload_error: 图片上传失败,请重试
       proof_remove: 移除
-      proof_images: 证明材料图片

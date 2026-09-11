@@ -61,7 +61,7 @@ export default class UserAchievementTree extends Component {
   }
 
   /**
-   * 按 series 分组,每组内按 tier 降序(数字越大等级越高,0 为最低),并标记每组的"最高已获得 tier"
+   * 按 series 分组,每组内按 tier 升序(数字越小等级越低,0 为最低,放最上面),并标记每组的"最高已获得 tier"
    * 用于"在帖子内显示"开关的系列内互斥(同一系列帖子内仅展示最高 tier)。
    */
   buildGroups(achievements) {
@@ -74,6 +74,8 @@ export default class UserAchievementTree extends Component {
           // ⚠ 只存原始字符串!trans() 返回的是 rich children 数组而非字符串(坑35),
           //   "未分组"的翻译推迟到 SeriesColumn 渲染时再取。
           name: a.seriesName() || a.series() || '',
+          // 系列排序:数字越小越靠前(0 在最左),同系列共用一个值
+          sort: a.seriesSort() || 0,
           items: [],
         });
       }
@@ -81,8 +83,8 @@ export default class UserAchievementTree extends Component {
     });
 
     const sortItems = (x, y) =>
-      // tier 降序:数字越大等级越高,顶端显示最高等级(0 为最低)
-      (y.tier() || 0) - (x.tier() || 0) || (x.position() || 0) - (y.position() || 0) || String(x.id()).localeCompare(String(y.id()));
+      // tier 升序:数字越小等级越低,顶端显示最低等级(0 为最低)
+      (x.tier() || 0) - (y.tier() || 0) || (x.position() || 0) - (y.position() || 0) || String(x.id()).localeCompare(String(y.id()));
 
     map.forEach((g) => {
       g.items.sort(sortItems);
@@ -92,6 +94,10 @@ export default class UserAchievementTree extends Component {
 
     const arr = Array.from(map.values());
     arr.sort((a, b) => {
+      // 系列排序值优先:数字越小越靠左(0 最左),这是管理员手动控制的系列顺序
+      const bySort = (a.sort || 0) - (b.sort || 0);
+      if (bySort !== 0) return bySort;
+      // 同排序值时,已获得的系列靠前
       const aHas = !!a.topEarned;
       const bHas = !!b.topEarned;
       if (aHas !== bHas) return bHas - aHas;
