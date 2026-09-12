@@ -1,19 +1,21 @@
 # Flarum Achievement Tree
 
+重要提醒：本项目使用ai生成,安装前请务必备份数据，并在测试环境先行测试验证。
+
 ![Release](https://img.shields.io/github/v/release/thefish12357/flarum-achievement-tree)
 
 一个 [Flarum](https://flarum.org) 扩展:为论坛添加用户「成就树」(徽章)功能。已实现:帖子下方成就徽章行、用户资料页成就树、成就申请与审核(含驳回理由)、审核结果通知、自动解锁规则等。
 
 ## 仓库结构
 
-| 路径 | 说明 |
-| --- | --- |
-| `extend.php` / `composer.json` | 扩展入口与包定义 |
-| `src/` | PHP 后端(模型/控制器/序列化/规则引擎/监听器) |
-| `js/` | 前端源码与构建产物(`js/dist` 为编译输出) |
-| `migrations/` | 数据库迁移 |
-| `less/` `locale/` | 样式与语言包 |
-| `flarum/` | 本地运行的 Flarum 站点(由 composer 安装,**不纳入版本控制**,含 vendor / storage / 配置与密钥) |
+| 路径                           | 说明                                                                                         |
+| ------------------------------ | -------------------------------------------------------------------------------------------- |
+| `extend.php` / `composer.json` | 扩展入口与包定义                                                                             |
+| `src/`                         | PHP 后端(模型/控制器/序列化/规则引擎/监听器)                                                 |
+| `js/`                          | 前端源码与构建产物(`js/dist` 为编译输出)                                                     |
+| `migrations/`                  | 数据库迁移                                                                                   |
+| `less/` `locale/`              | 样式与语言包                                                                                 |
+| `flarum/`                      | 本地运行的 Flarum 站点(由 composer 安装,**不纳入版本控制**,含 vendor / storage / 配置与密钥) |
 
 ## 本地开发
 
