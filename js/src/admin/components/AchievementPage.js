@@ -1,5 +1,5 @@
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
-import SubmitButton from 'flarum/common/components/SubmitButton';
+import Button from 'flarum/common/components/Button';
 import saveSettings from 'flarum/admin/utils/saveSettings';
 import Alert from 'flarum/common/components/Alert';
 import AchievementManager from './AchievementManager';
@@ -42,9 +42,10 @@ export default class AchievementPage extends ExtensionPage {
             }),
           ]),
           m('.Form-group', [
-            SubmitButton.component(
+            Button.component(
               {
                 className: 'Button Button--primary',
+                type: 'submit',
                 loading: this.loading,
               },
               app.translator.trans('thefish12357-achievement-tree.admin.settings.submit')

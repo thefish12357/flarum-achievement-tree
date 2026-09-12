@@ -16,8 +16,8 @@ use Flarum\Api\Controller\AbstractShowController;
 use Flarum\Foundation\ValidationException;
 use Flarum\Http\RequestUtil;
 use Flarum\Notification\NotificationSyncer;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Psr\Http\Message\ServerRequestInterface;
 use Thefish12357\AchievementTree\AchievementApplication;
 use Thefish12357\AchievementTree\Api\Serializer\AchievementApplicationSerializer;
@@ -35,9 +35,15 @@ class ReviewApplicationController extends AbstractShowController
      */
     protected $notifications;
 
-    public function __construct(NotificationSyncer $notifications)
+    /**
+     * @var ConnectionInterface
+     */
+    protected $db;
+
+    public function __construct(NotificationSyncer $notifications, ConnectionInterface $db)
     {
         $this->notifications = $notifications;
+        $this->db = $db;
     }
 
     protected function data(ServerRequestInterface $request, Document $document)
@@ -64,7 +70,7 @@ class ReviewApplicationController extends AbstractShowController
         $application->rejection_reason = Arr::get($data, 'rejectionReason');
 
         // 申请表更新、授予成就、发通知是多次写库,用事务保证一致性,避免部分成功丢数据
-        DB::transaction(function () use ($application, $status, $actor) {
+        $this->db->transaction(function () use ($application, $status, $actor) {
             $application->save();
 
             // 审核通过即自动授予成就

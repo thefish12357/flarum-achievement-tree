@@ -1,6 +1,10 @@
 # ===== 本地运行的 Flarum 站点(由 composer 安装,含 vendor/storage/配置文件与密钥),不纳入版本控制 =====
 /flarum/
 
+# ===== 本地 Docker 调试用:nginx 配置 + 挂载进容器的扩展副本(内容与仓库重复,勿提交) =====
+/nginx/
+/extension/
+
 # ===== 扩展前端依赖与 sourcemap(构建产物 js 保留,map 忽略) =====
 /js/node_modules/
 /js/dist/*.map
@@ -9,9 +13,9 @@
 .env
 
 # ===== 杂项 / 编辑器 / 系统文件 =====
-UserPage.js
 .DS_Store
 Thumbs.db
 *.log
 .idea/
 .vscode/
+.phpunit.result.cache

@@ -13,6 +13,7 @@ namespace Thefish12357\AchievementTree\Api\Controller;
 
 use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\Foundation\ValidationException;
+use Flarum\Group\Group;
 use Flarum\Http\RequestUtil;
 use Illuminate\Support\Arr;
 use Psr\Http\Message\ServerRequestInterface;
@@ -84,8 +85,8 @@ class CreateApplicationController extends AbstractCreateController
                     ->where('id', (int) $m[1])
                     ->where('type', AchievementImage::TYPE_PROOF)
                     ->where(function ($q) use ($actor) {
-                        $q->where('user_id', $actor->id)->orWhereHas('user', function ($uq) {
-                            $uq->where('is_admin', 1);
+                        $q->where('user_id', $actor->id)->orWhereHas('user.groups', function ($gq) {
+                            $gq->where('groups.id', Group::ADMINISTRATOR_ID);
                         });
                     })
                     ->exists();

@@ -12,6 +12,7 @@
 use Flarum\Api\Serializer\UserSerializer;
 use Flarum\Extend;
 use Flarum\Foundation\Paths;
+use Flarum\Http\UrlGenerator;
 use Flarum\Discussion\Event\Started;
 use Flarum\Post\Event\Posted;
 use Flarum\Post\Event\PostWasLiked;
@@ -20,6 +21,7 @@ use Flarum\User\Event\GroupsChanged;
 use Flarum\User\Event\LoggedIn;
 use Flarum\User\Event\Registered;
 use Flarum\User\User;
+use Illuminate\Container\Container;
 use Thefish12357\AchievementTree\Access\AchievementPolicy;
 use Thefish12357\AchievementTree\Access\ApplicationPolicy;
 use Thefish12357\AchievementTree\Achievement;
@@ -52,13 +54,17 @@ return [
     // 成就徽章图片上传:声明本扩展专用磁盘(核心并不保证存在 'flarum' 磁盘)
     // 图片存放于 storage 下(不公开直出),子目录可在后台扩展设置中配置
     (new Extend\Filesystem())
-        ->disk('achievement-tree-badges', function (Paths $paths, SettingsRepositoryInterface $settings) {
+        ->disk('achievement-tree-badges', function (Paths $paths, UrlGenerator $url) {
+            $settings = Container::getInstance()->make(SettingsRepositoryInterface::class);
+
             return [
                 'driver' => 'local',
                 'root' => $paths->storage.'/'.UploadSettings::STORAGE_ROOT.'/'.UploadSettings::badgesPath($settings),
             ];
         })
-        ->disk('achievement-tree-proofs', function (Paths $paths, SettingsRepositoryInterface $settings) {
+        ->disk('achievement-tree-proofs', function (Paths $paths, UrlGenerator $url) {
+            $settings = Container::getInstance()->make(SettingsRepositoryInterface::class);
+
             return [
                 'driver' => 'local',
                 'root' => $paths->storage.'/'.UploadSettings::STORAGE_ROOT.'/'.UploadSettings::proofsPath($settings),
